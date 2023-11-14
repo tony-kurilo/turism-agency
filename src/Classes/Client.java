@@ -1,0 +1,64 @@
+package Classes;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Client {
+    private String login;
+    private String password;
+    private String name;
+    private String telNumber;
+    private String address;
+    //private List<String> data;
+
+    public Client() {}
+
+    public Client(String login, String password, String name, String telNumber, String address) {
+        this.login = login;
+        this.password = password;
+        this.name = name;
+        this.telNumber = telNumber;
+        this.address = address;
+    }
+
+
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setTelNumber(String telNumber) {
+        this.telNumber = telNumber;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+
+    public String getAddress() {
+        return address;
+    }
+
+    public String getTelNumber() {
+        return telNumber;
+    }
+
+    public boolean checkClientExists(String clientName) {
+        // Реализация метода checkClientExists
+        return false;
+    }
+
+    public void authorize() {
+        // Реализация метода authorize
+    }
+
+    public void showMyVouchers(String clientName) {
+        // Реализация метода showMyVouchers
+    }
+}

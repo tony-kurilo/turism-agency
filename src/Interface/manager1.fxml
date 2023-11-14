@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="650.0" prefWidth="900.0" style="-fx-background-color: #dcdcdc;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Interface.Manager1">
+   <children>
+      <AnchorPane layoutX="-2.0" prefHeight="651.0" prefWidth="247.0" style="-fx-background-color: #ffffff;">
+         <children>
+            <Label layoutX="76.0" layoutY="42.0" text="Touristique">
+               <font>
+                  <Font name="Calisto MT Bold" size="18.0" />
+               </font>
+            </Label>
+            <Button layoutX="73.0" layoutY="187.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="101.0" text="Клієнти" />
+            <Button layoutX="73.0" layoutY="251.0" mnemonicParsing="false" onAction="#switchToVouchers" prefHeight="37.0" prefWidth="101.0" text="Путівки" />
+            <Button layoutX="73.0" layoutY="316.0" mnemonicParsing="false" onAction="#switchToDataAnalys" prefHeight="37.0" prefWidth="101.0" text="Аналітика" />
+            <Button layoutX="73.0" layoutY="378.0" mnemonicParsing="false" onAction="#switchToData" prefHeight="37.0" prefWidth="101.0" text="Мої дані" />
+            <Button layoutX="73.0" layoutY="550.0" mnemonicParsing="false" onAction="#switchToLogin" prefHeight="37.0" prefWidth="101.0" text="Вийти" />
+         </children>
+      </AnchorPane>
+      <AnchorPane layoutX="258.0" layoutY="11.0" prefHeight="626.0" prefWidth="627.0" style="-fx-background-color: #ffffff;">
+         <children>
+            <TableView layoutX="23.0" layoutY="63.0" prefHeight="214.0" prefWidth="582.0">
+              <columns>
+                <TableColumn prefWidth="216.0" text="ПІБ" />
+                <TableColumn prefWidth="138.0" text="Номер тел." />
+                  <TableColumn prefWidth="227.0" text="Адреса проживання" />
+              </columns>
+            </TableView>
+            <Label layoutX="23.0" layoutY="32.0" text="Список клієнтів:">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <Label layoutX="32.0" layoutY="305.0" text="Зареєструвати клієнта:">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <TextField layoutX="119.0" layoutY="344.0" />
+            <Label layoutX="60.0" layoutY="346.0" text="Логін">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <Label layoutX="51.0" layoutY="387.0" text="Пароль">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <TextField layoutX="119.0" layoutY="385.0" />
+            <Label layoutX="77.0" layoutY="429.0" text="ПІБ">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <TextField layoutX="119.0" layoutY="427.0" />
+            <Label layoutX="25.0" layoutY="470.0" text="Номер тел.">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <TextField layoutX="119.0" layoutY="468.0" />
+            <Label layoutX="12.0" layoutY="509.0" prefHeight="25.0" prefWidth="101.0" text="Адреса прож.">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <TextField layoutX="119.0" layoutY="509.0" />
+            <Label layoutX="324.0" layoutY="305.0" text="Редактувати дані клієнта:">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <ChoiceBox layoutX="403.0" layoutY="344.0" prefWidth="150.0" />
+            <Button layoutX="386.0" layoutY="384.0" mnemonicParsing="false" onAction="#switchToDeleteClientScene" text="Підтвердити">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Button>
+            <Label layoutX="328.0" layoutY="346.0" text="Оберіть:">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <Label layoutX="327.0" layoutY="450.0" text="Видалити клієнта:">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <Label layoutX="335.0" layoutY="481.0" text="Оберіть:">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <ChoiceBox layoutX="403.0" layoutY="479.0" prefWidth="150.0" />
+            <Button layoutX="386.0" layoutY="521.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="92.0" text="Підтвердити">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Button>
+            <Button layoutX="119.0" layoutY="565.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="92.0" text="Підтвердити">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Button>
+         </children></AnchorPane>
+   </children>
+</AnchorPane>
