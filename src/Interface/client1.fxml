@@ -69,7 +69,7 @@
                   <Font size="15.0" />
                </font>
             </Label>
-            <Button fx:id="makeVoucherButton" layoutX="266.0" layoutY="518.0" mnemonicParsing="false" onAction="#onSaveButtonClicked" prefHeight="37.0" prefWidth="90.0" text="Створити" />
+            <Button fx:id="makeVoucherButton" layoutX="266.0" layoutY="518.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="90.0" text="Створити" />
             <TextField layoutX="40.0" layoutY="373.0" />
             <TextField layoutX="237.0" layoutY="373.0" />
             <TextField layoutX="426.0" layoutY="373.0" />

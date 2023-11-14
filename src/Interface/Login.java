@@ -46,7 +46,6 @@ public class Login {
 
 
         if (clientMatch && !managerMatch && !hrManagerMatch) {
-            userModel.setUsername(username);
             switchToClient(actionEvent);
         } else if (managerMatch && !clientMatch && !hrManagerMatch) {
             switchToManager(actionEvent);

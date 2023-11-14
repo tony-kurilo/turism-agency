@@ -47,9 +47,9 @@ public class SceneController {
         String username = loginTextField.getText();
         String password = passwordTextField.getText();
 
-        if (checkCredentials("Interface/clients.txt", username, password)) {
+        if (checkCredentials("C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clients.txt", username, password)) {
             switchToClient(actionEvent);
-        } else if (checkCredentials("Interface/managers.txt", username, password)) {
+        } else if (checkCredentials("C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\managers.txt", username, password)) {
             switchToManager(actionEvent);
         } else {
             errorLabel.setText("Невірний логін або пароль");
@@ -61,7 +61,7 @@ public class SceneController {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
-                if (parts.length == 2 && parts[0].equals(username) && parts[1].equals(password)) {
+                if (parts.length == 5 && parts[0].equals(username) && parts[1].equals(password)) {
                     return true;
                 }
             }

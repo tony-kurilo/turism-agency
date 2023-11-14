@@ -50,26 +50,6 @@ public class Client1 {
         stage.setScene(scene);
         stage.show();
     }
-    public void onSaveButtonClicked(ActionEvent event) {
-        String country = countryTextField.getText();
-        String city = cityTextField.getText();
-        String hotel = hotelTextField.getText();
-        LocalDate beginDate = beginDatePicker.getValue();
-        LocalDate endDate = endDatePicker.getValue();
 
-        if (country.isEmpty() || city.isEmpty() || hotel.isEmpty() || beginDate == null || endDate == null) {
-            // Обработка ошибки: не все данные введены
-            // Вывести сообщение или предпринять другие действия
-            return;
-        }
-
-        String username = userModel.getUsername(); // Получить имя пользователя
-
-        // Создать объект Voucher и передать данные
-        Voucher voucher = new Voucher(username, country, city, hotel, beginDate, endDate);
-
-        // Сохранить объект в файл
-        VoucherManager.saveVoucherToFile(voucher);
-    }
 
 }
