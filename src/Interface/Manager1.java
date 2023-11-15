@@ -1,14 +1,20 @@
 package Interface;
 
 import Classes.Client;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
 import java.io.*;
@@ -21,6 +27,14 @@ public class Manager1 {
     private Parent root;
 
     @FXML
+    private TableColumn<Client, String> nameColumn;
+    @FXML
+    private TableColumn<Client, String> telNumberColumn;
+    @FXML
+    private TableColumn<Client, String> addressColumn;
+    @FXML
+    private Button updateClientsButton;
+    @FXML
     private TextField usernameTextField;
     @FXML
     private TextField passwordTextField;
@@ -32,6 +46,10 @@ public class Manager1 {
     private TextField addressTextField;
     @FXML
     private ChoiceBox <String> clientEditChoiceBox;
+    @FXML
+    private ChoiceBox <String> clientDeleteChoiceBox;
+    @FXML
+    private TableView<Client> clientsTableView;
     private ArrayList<Client> clients = new ArrayList<>();
 
 
@@ -68,11 +86,6 @@ public class Manager1 {
         stage.show();
     }
     public void switchToEditClientScene(javafx.event.ActionEvent actionEvent) throws IOException {
-        /*Parent root = FXMLLoader.load(getClass().getResource("manager11.fxml"));
-        Stage newStage = new Stage();
-        newStage.setTitle("Редагування даних Клієнта");
-        newStage.setScene(new Scene(root));
-        newStage.show();*/
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("manager11.fxml"));
         Parent root = loader.load();
@@ -86,8 +99,6 @@ public class Manager1 {
         newStage.setTitle("Редагування даних Клієнта");
         newStage.setScene(new Scene(root));
         newStage.show();
-
-
     }
 
     public void switchToLogin(javafx.event.ActionEvent actionEvent) throws IOException {
@@ -138,6 +149,8 @@ public class Manager1 {
 
         List<String> clientNames = readClientData(new File(filePath));
         clientEditChoiceBox.getItems().setAll(clientNames);
+        clientDeleteChoiceBox.getItems().setAll(clientNames);
+
     }
 
     private List<String> readClientData(File file) {
@@ -167,8 +180,5 @@ public class Manager1 {
         return clientData;
     }
 
-    public void handleClientSelection(ActionEvent actionEvent) throws IOException {
-        String selectedClientName = clientEditChoiceBox.getValue();
-        ClientData.setClientName(selectedClientName);
-    }
+
 }

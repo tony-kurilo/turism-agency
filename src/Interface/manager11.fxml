@@ -32,7 +32,7 @@
       </Label>
       <TextField fx:id="addressTextField" layoutX="227.0" layoutY="271.0" />
       <Button layoutX="263.0" layoutY="324.0" mnemonicParsing="false" onAction="#updateClientData" prefHeight="25.0" prefWidth="88.0" text="Підтвердити" />
-      <Button layoutX="271.0" layoutY="355.0" mnemonicParsing="false" text="Скасувати" />
+      <Button fx:id="close" layoutX="271.0" layoutY="355.0" mnemonicParsing="false" onAction="#closeWindow" text="Закрити" />
       <Label layoutX="42.0" layoutY="40.0" text="Логін:">
          <font>
             <Font size="15.0" />

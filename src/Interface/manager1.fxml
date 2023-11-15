@@ -27,11 +27,11 @@
       </AnchorPane>
       <AnchorPane layoutX="258.0" layoutY="11.0" prefHeight="626.0" prefWidth="627.0" style="-fx-background-color: #ffffff;">
          <children>
-            <TableView fx:id="clientsTableView" layoutX="23.0" layoutY="63.0" prefHeight="214.0" prefWidth="582.0">
+            <TableView fx:id="clientsTableView" layoutX="23.0" layoutY="63.0" onSort="#scanClientDataFile" prefHeight="214.0" prefWidth="582.0">
               <columns>
-                <TableColumn prefWidth="216.0" text="ПІБ" />
-                <TableColumn prefWidth="138.0" text="Номер тел." />
-                  <TableColumn prefWidth="227.0" text="Адреса проживання" />
+                <TableColumn fx:id="nameColumn" prefWidth="216.0" text="ПІБ" />
+                <TableColumn fx:id="telNumberColumn" prefWidth="138.0" text="Номер тел." />
+                  <TableColumn fx:id="addressColumn" prefWidth="227.0" text="Адреса проживання" />
               </columns>
             </TableView>
             <Label layoutX="23.0" layoutY="32.0" text="Список клієнтів:">
@@ -100,13 +100,18 @@
                   <Font size="15.0" />
                </font>
             </Label>
-            <ChoiceBox layoutX="403.0" layoutY="479.0" prefWidth="150.0" />
-            <Button layoutX="386.0" layoutY="521.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="92.0" text="Підтвердити">
+            <ChoiceBox fx:id="clientDeleteChoiceBox" layoutX="403.0" layoutY="479.0" prefWidth="150.0" />
+            <Button fx:id="deleteButton" layoutX="386.0" layoutY="521.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="92.0" text="Підтвердити">
                <font>
                   <Font size="13.0" />
                </font>
             </Button>
             <Button fx:id="createClientButton" layoutX="119.0" layoutY="565.0" mnemonicParsing="false" onAction="#createClient" prefHeight="25.0" prefWidth="92.0" text="Підтвердити">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Button>
+            <Button fx:id="updateClientsButton" layoutX="515.0" layoutY="29.0" mnemonicParsing="false" onAction="#scanClientDataFile" prefHeight="27.0" prefWidth="76.0" text="Оновити">
                <font>
                   <Font size="13.0" />
                </font>

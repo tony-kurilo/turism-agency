@@ -1,8 +1,14 @@
 package Interface;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -10,6 +16,7 @@ import java.util.List;
 
 
 public class Manager11 {
+
     @FXML
     private Label nameLabel;
     @FXML
@@ -20,7 +27,8 @@ public class Manager11 {
     private Label telNumberLabel;
     @FXML
     private Label addressLabel;
-
+    @FXML
+    private Button close;
     @FXML
     private TextField usernameTextField;
     @FXML
@@ -31,6 +39,7 @@ public class Manager11 {
     private TextField telNumberTextField;
     @FXML
     private TextField addressTextField;
+
 
     public void displayUserData() {
         // Получение username из UserSession
@@ -96,6 +105,12 @@ public class Manager11 {
                 String currentClientName = tokens[2].trim();
 
                 if (currentClientName.equals(clientName)) {
+                    String oldUsername = tokens[0].trim();
+                    String oldPassword = tokens[1].trim();
+                    String oldName = tokens[2].trim();
+                    String oldTelNumber = tokens[3].trim();
+                    String oldAddress = tokens[4].trim();
+
                     // Найден нужный клиент, обновляем данные
                     if (!username.isEmpty()) tokens[0] = username.trim();
                     if (!password.isEmpty()) tokens[1] = password.trim();
@@ -105,7 +120,13 @@ public class Manager11 {
 
                     // Обновляем строку в списке
                     lines.set(lines.size() - 1, String.join(",", tokens));
-                    displayUserData();
+
+                    // Обновляем Label, используя старые значения при необходимости
+                    usernameLabel.setText(!username.isEmpty() ? username : oldUsername);
+                    passwordLabel.setText(!password.isEmpty() ? password : oldPassword);
+                    nameLabel.setText(!name.isEmpty() ? name : oldName);
+                    telNumberLabel.setText(!telNumber.isEmpty() ? telNumber : oldTelNumber);
+                    addressLabel.setText(!address.isEmpty() ? address : oldAddress);
                 }
             }
         } catch (IOException e) {
@@ -121,8 +142,13 @@ public class Manager11 {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    public void closeWindow(javafx.event.ActionEvent actionEvent)throws IOException {
+
+
+        Stage stage = (Stage) close.getScene().getWindow();
+        stage.close();
+
 
     }
-
-
 }
