@@ -33,12 +33,12 @@
                   <Font size="15.0" />
                </font>
             </Label>
-            <Label layoutX="56.0" layoutY="101.0" text="Label">
+            <Label fx:id="nameLabel" layoutX="56.0" layoutY="101.0" text="Label">
                <font>
                   <Font size="15.0" />
                </font>
             </Label>
-            <Label layoutX="56.0" layoutY="196.0" text="Label">
+            <Label fx:id="numberLabel" layoutX="56.0" layoutY="196.0" text="Label">
                <font>
                   <Font size="15.0" />
                </font>
@@ -48,7 +48,7 @@
                   <Font size="15.0" />
                </font>
             </Label>
-            <Label layoutX="56.0" layoutY="303.0" text="Label">
+            <Label fx:id="companyLabel" layoutX="56.0" layoutY="303.0" text="Label">
                <font>
                   <Font size="15.0" />
                </font>

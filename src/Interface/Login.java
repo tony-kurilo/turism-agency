@@ -46,10 +46,16 @@ public class Login {
 
 
         if (clientMatch && !managerMatch && !hrManagerMatch) {
+            UserData.setUsername(username);
+            UserData.setPassword(password);
             switchToClient(actionEvent);
         } else if (managerMatch && !clientMatch && !hrManagerMatch) {
+            UserData.setUsername(username);
+            UserData.setPassword(password);
             switchToManager(actionEvent);
         } else if (hrManagerMatch && !clientMatch && !managerMatch) {
+            UserData.setUsername(username);
+            UserData.setPassword(password);
             switchToHRManager(actionEvent);
         } else {
             errorLabel.setText("Неверный логин или пароль.");

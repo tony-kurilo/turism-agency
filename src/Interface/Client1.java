@@ -36,13 +36,28 @@ public class Client1 {
     private DatePicker endDatePicker;
 
 
+
+
     public void switchToData(javafx.event.ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("client2.fxml"));
+        Parent root = loader.load();
+
+        Client2 client2Controller = loader.getController();
+        client2Controller.displayUserData();
+
+        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+        /*public void switchToData(javafx.event.ActionEvent actionEvent) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("client2.fxml"));
         stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
         scene = new Scene (root);
         stage.setScene(scene);
         stage.show();
-    }
+    }*/
     public void switchToLogin(javafx.event.ActionEvent actionEvent) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("login.fxml"));
         stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();

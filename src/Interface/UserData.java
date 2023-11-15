@@ -1,23 +1,23 @@
 package Interface;
 
 public class UserData {
-    protected String username;
+    private static String username;
+    private static String password;
 
-    protected String password;
-
-    public String getUsername() {
+    public static String getUsername() {
         return username;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public static void setUsername(String username) {
+        UserData.username = username;
     }
 
-    public String getPassword() {
+    public static String getPassword() {
         return password;
     }
-    public void setPassword(String password) {
-        this.password = password;
+
+    public static void setPassword(String password) {
+        UserData.password = password;
     }
 
 }

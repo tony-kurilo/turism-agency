@@ -12,6 +12,8 @@ public class Manager4 {
     private Stage stage;
     private Scene scene;
     private Parent root;
+
+
     public void switchToClients(javafx.event.ActionEvent actionEvent) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("manager1.fxml"));
         stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
