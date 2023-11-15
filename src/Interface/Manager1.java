@@ -11,10 +11,9 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Manager1 {
     private Stage stage;
@@ -32,7 +31,7 @@ public class Manager1 {
     @FXML
     private TextField addressTextField;
     @FXML
-    private ChoiceBox clientEditChoiceBox;
+    private ChoiceBox <String> clientEditChoiceBox;
 
 
     private ArrayList<Client> clients = new ArrayList<>();
@@ -118,5 +117,44 @@ public class Manager1 {
         }
     }
 
+    public void scanClientDataFile() throws IOException{
+        // Пропишите путь к файлу с данными
+        String filePath = "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clients.txt";
 
+        List<String> clientNames = readClientData(new File(filePath));
+        clientEditChoiceBox.getItems().setAll(clientNames);
+    }
+
+    private List<String> readClientData(File file) {
+        List<String> clientData = new ArrayList<>();
+
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                // Разделяем строку на части, используя запятую как разделитель
+                String[] parts = line.split(",");
+
+                // Предполагаем, что у нас есть все необходимые части данных
+                String username = parts[0];
+                String password = parts[1];
+                String name = parts[2];
+                String telNumber = parts[3];
+                String address = parts[4];
+
+                // Вы можете использовать только 'name' или любую другую часть данных, в зависимости от вашего выбора
+                clientData.add(name);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Обработайте исключение, если что-то пошло не так при чтении файла
+        }
+
+        return clientData;
+    }
+
+    public void handleClientSelection(ActionEvent actionEvent) throws IOException {
+        String selectedClientName = clientEditChoiceBox.getValue();
+
+
+    }
 }

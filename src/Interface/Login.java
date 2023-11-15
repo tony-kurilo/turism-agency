@@ -88,11 +88,21 @@ public class Login {
         stage.show();
     }
     public void switchToManager(javafx.event.ActionEvent actionEvent) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("manager1.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("manager1.fxml"));
+        Parent root = loader.load();
+
+        Manager1 manager1Controller = loader.getController();
+        manager1Controller.scanClientDataFile();
+
+        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+        /*Parent root = FXMLLoader.load(getClass().getResource("manager1.fxml"));
         stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
         scene = new Scene (root);
         stage.setScene(scene);
-        stage.show();
+        stage.show();*/
     }
     public void switchToHRManager(javafx.event.ActionEvent actionEvent) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("hrmanager1.fxml"));
