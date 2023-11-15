@@ -71,9 +71,9 @@
                </font>
             </Label>
             <Button fx:id="makeVoucherButton" layoutX="254.0" layoutY="450.0" mnemonicParsing="false" prefHeight="21.0" prefWidth="115.0" text="Створити запит" />
-            <TextField layoutX="37.0" layoutY="313.0" />
-            <TextField layoutX="237.0" layoutY="313.0" />
-            <TextField layoutX="418.0" layoutY="313.0" />
+            <TextField fx:id="countryTextField" layoutX="37.0" layoutY="313.0" />
+            <TextField fx:id="cityTextField" layoutX="237.0" layoutY="313.0" />
+            <TextField fx:id="hotelTextField" layoutX="418.0" layoutY="313.0" />
             <Label layoutX="41.0" layoutY="511.0" text="Оберіть запит, який бажаєте скасувати:">
                <font>
                   <Font size="15.0" />

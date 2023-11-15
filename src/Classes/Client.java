@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Client {
-    private String login;
+    private String username;
     private String password;
     private String name;
     private String telNumber;
@@ -13,8 +13,8 @@ public class Client {
 
     public Client() {}
 
-    public Client(String login, String password, String name, String telNumber, String address) {
-        this.login = login;
+    public Client(String username, String password, String name, String telNumber, String address) {
+        this.username = username;
         this.password = password;
         this.name = name;
         this.telNumber = telNumber;
@@ -34,6 +34,13 @@ public class Client {
 
     public void setTelNumber(String telNumber) {
         this.telNumber = telNumber;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+    public String getPassword() {
+        return password;
     }
 
     public String getName() {

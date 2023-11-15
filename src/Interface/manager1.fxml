@@ -44,7 +44,7 @@
                   <Font size="15.0" />
                </font>
             </Label>
-            <TextField layoutX="119.0" layoutY="344.0" />
+            <TextField fx:id="usernameTextField" layoutX="119.0" layoutY="344.0" />
             <Label layoutX="60.0" layoutY="346.0" text="Логін">
                <font>
                   <Font size="15.0" />
@@ -55,31 +55,31 @@
                   <Font size="15.0" />
                </font>
             </Label>
-            <TextField layoutX="119.0" layoutY="385.0" />
+            <TextField fx:id="passwordTextField" layoutX="119.0" layoutY="385.0" />
             <Label layoutX="77.0" layoutY="429.0" text="ПІБ">
                <font>
                   <Font size="15.0" />
                </font>
             </Label>
-            <TextField layoutX="119.0" layoutY="427.0" />
+            <TextField fx:id="nameTextField" layoutX="119.0" layoutY="427.0" />
             <Label layoutX="25.0" layoutY="470.0" text="Номер тел.">
                <font>
                   <Font size="15.0" />
                </font>
             </Label>
-            <TextField layoutX="119.0" layoutY="468.0" />
+            <TextField fx:id="numberTextField" layoutX="119.0" layoutY="468.0" />
             <Label layoutX="12.0" layoutY="509.0" prefHeight="25.0" prefWidth="101.0" text="Адреса прож.">
                <font>
                   <Font size="15.0" />
                </font>
             </Label>
-            <TextField layoutX="119.0" layoutY="509.0" />
+            <TextField fx:id="addressTextField" layoutX="119.0" layoutY="509.0" />
             <Label layoutX="324.0" layoutY="305.0" text="Редактувати дані клієнта:">
                <font>
                   <Font size="15.0" />
                </font>
             </Label>
-            <ChoiceBox layoutX="403.0" layoutY="344.0" prefWidth="150.0" />
+            <ChoiceBox fx:id="clientEditChoiceBox" layoutX="403.0" layoutY="344.0" prefWidth="150.0" />
             <Button layoutX="386.0" layoutY="384.0" mnemonicParsing="false" onAction="#switchToDeleteClientScene" text="Підтвердити">
                <font>
                   <Font size="13.0" />
@@ -106,7 +106,7 @@
                   <Font size="13.0" />
                </font>
             </Button>
-            <Button layoutX="119.0" layoutY="565.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="92.0" text="Підтвердити">
+            <Button fx:id="createClientButton" layoutX="119.0" layoutY="565.0" mnemonicParsing="false" onAction="#createClient" prefHeight="25.0" prefWidth="92.0" text="Підтвердити">
                <font>
                   <Font size="13.0" />
                </font>
