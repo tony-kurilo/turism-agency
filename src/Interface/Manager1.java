@@ -32,9 +32,9 @@ public class Manager1 {
     private TextField addressTextField;
     @FXML
     private ChoiceBox <String> clientEditChoiceBox;
-
-
     private ArrayList<Client> clients = new ArrayList<>();
+
+
     public void switchToVouchers(javafx.event.ActionEvent actionEvent) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("manager2.fxml"));
         stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
@@ -67,14 +67,29 @@ public class Manager1 {
         stage.setScene(scene);
         stage.show();
     }
-    public void switchToDeleteClientScene(javafx.event.ActionEvent actionEvent) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("manager11.fxml"));
+    public void switchToEditClientScene(javafx.event.ActionEvent actionEvent) throws IOException {
+        /*Parent root = FXMLLoader.load(getClass().getResource("manager11.fxml"));
         Stage newStage = new Stage();
-        newStage.setTitle("Название вашего нового окна"); // Установите заголовок нового окна
+        newStage.setTitle("Редагування даних Клієнта");
         newStage.setScene(new Scene(root));
-        // Показываем новое окно
+        newStage.show();*/
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("manager11.fxml"));
+        Parent root = loader.load();
+
+        Manager11  manager11Controller = loader.getController();
+        String selectedClientName = clientEditChoiceBox.getValue();
+        ClientData.setClientName(selectedClientName);
+        manager11Controller.displayUserData();
+
+        Stage newStage = new Stage();
+        newStage.setTitle("Редагування даних Клієнта");
+        newStage.setScene(new Scene(root));
         newStage.show();
+
+
     }
+
     public void switchToLogin(javafx.event.ActionEvent actionEvent) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("login.fxml"));
         stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
@@ -154,7 +169,6 @@ public class Manager1 {
 
     public void handleClientSelection(ActionEvent actionEvent) throws IOException {
         String selectedClientName = clientEditChoiceBox.getValue();
-
-
+        ClientData.setClientName(selectedClientName);
     }
 }
