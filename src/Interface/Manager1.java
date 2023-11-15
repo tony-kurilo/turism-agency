@@ -27,9 +27,20 @@ public class Manager1 {
         stage.show();
     }
     public void switchToData(javafx.event.ActionEvent actionEvent) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("manager4.fxml"));
+        /*Parent root = FXMLLoader.load(getClass().getResource("manager4.fxml"));
         stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
         scene = new Scene (root);
+        stage.setScene(scene);
+        stage.show();*/
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("manager4.fxml"));
+        Parent root = loader.load();
+
+        Manager4 manager4controller = loader.getController();
+        manager4controller.displayUserData();
+
+        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
     }
