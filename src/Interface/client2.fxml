@@ -15,8 +15,9 @@
                </font>
             </Label>
             <Button layoutX="73.0" layoutY="187.0" mnemonicParsing="false" onAction="#switchToVouchers" prefHeight="37.0" prefWidth="101.0" text="Путівки" />
-            <Button layoutX="73.0" layoutY="246.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="101.0" text="Мої дані" />
+            <Button layoutX="73.0" layoutY="301.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="101.0" text="Мої дані" />
             <Button layoutX="73.0" layoutY="523.0" mnemonicParsing="false" onAction="#switchToLogin" prefHeight="37.0" prefWidth="101.0" text="Вийти" />
+            <Button fx:id="clientVouchersButton" layoutX="73.0" layoutY="246.0" mnemonicParsing="false" onAction="#switchToMyVouchers" prefHeight="37.0" prefWidth="101.0" text="Мої путівки" />
          </children></AnchorPane>
       <AnchorPane layoutX="258.0" layoutY="11.0" prefHeight="626.0" prefWidth="628.0" style="-fx-background-color: #ffffff;">
          <children>

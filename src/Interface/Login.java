@@ -81,7 +81,7 @@ public class Login {
         return false;
     }
     public void switchToClient(javafx.event.ActionEvent actionEvent) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("client1.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("Client3.fxml"));
         stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
         scene = new Scene (root);
         stage.setScene(scene);

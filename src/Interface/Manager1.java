@@ -9,11 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TableColumn;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
@@ -26,6 +22,8 @@ public class Manager1 {
     private Scene scene;
     private Parent root;
 
+    @FXML
+    private Label alertLabel;
     @FXML
     private TableColumn<Client, String> nameColumn;
     @FXML
@@ -51,6 +49,7 @@ public class Manager1 {
     @FXML
     private TableView<Client> clientsTableView;
     private ArrayList<Client> clients = new ArrayList<>();
+    private ObservableList<Client> clientsList = FXCollections.observableArrayList();
 
 
     public void switchToVouchers(javafx.event.ActionEvent actionEvent) throws IOException {
@@ -111,7 +110,32 @@ public class Manager1 {
 
     public void createClient(ActionEvent actionEvent) throws IOException {
         // Считывание данных из текстовых полей
+        // Считывание данных из текстовых полей
         String username = usernameTextField.getText();
+        String password = passwordTextField.getText();
+        String name = nameTextField.getText();
+        String telNumber = numberTextField.getText();
+        String address = addressTextField.getText();
+
+        // Check for duplicates in existing clients
+        if (checkForDuplicates(username, telNumber)) {
+            // Display an alert if a duplicate is found
+            alertLabel.setText("Такий акаунт або номер телефону вже існує");
+            return; // Cancel the creation process
+        }
+
+        // Создание объекта Client и установка значений атрибутов
+        Client client = new Client(username, password, name, telNumber, address);
+
+        // Добавление клиента в коллекцию
+        clients.add(client);
+
+        // Добавление коллекции в файл с данными
+        saveDataToFile("C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clients.txt", clients);
+
+        // Clear the alertLabel if the creation process is successful
+        alertLabel.setText("");
+        /*String username = usernameTextField.getText();
         String password = passwordTextField.getText();
         String name = nameTextField.getText();
         String telNumber = numberTextField.getText();
@@ -122,9 +146,19 @@ public class Manager1 {
 
         // Добавление клиента в коллекцию
         clients.add(client);
+        clientsList.add(client);
 
         // Добавление коллекции в файл с данными
-        saveDataToFile("C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clients.txt", clients);
+        saveDataToFile("C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clients.txt", clients);*/
+    }
+
+    private boolean checkForDuplicates(String username, String telNumber) {
+        for (Client client : clients) {
+            if (client.getUsername().equals(username) || client.getTelNumber().equals(telNumber)) {
+                return true; // Duplicate found
+            }
+        }
+        return false; // No duplicates found
     }
 
     private void saveDataToFile(String filename, ArrayList<Client> clients) {
@@ -147,13 +181,23 @@ public class Manager1 {
         // Пропишите путь к файлу с данными
         String filePath = "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clients.txt";
 
-        List<String> clientNames = readClientData(new File(filePath));
+        List<String> clientNames = readClientName(new File(filePath));
         clientEditChoiceBox.getItems().setAll(clientNames);
         clientDeleteChoiceBox.getItems().setAll(clientNames);
 
+
+        clientsTableView.setItems(clientsList);
+        List<Client> clientData = readClientData(new File(filePath));
+        clientsList.clear();
+        clientsList.addAll(clientData);
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        telNumberColumn.setCellValueFactory(new PropertyValueFactory<>("telNumber"));
+        addressColumn.setCellValueFactory(new PropertyValueFactory<>("address"));
+
+
     }
 
-    private List<String> readClientData(File file) {
+    private List<String> readClientName(File file) {
         List<String> clientData = new ArrayList<>();
 
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
@@ -179,6 +223,72 @@ public class Manager1 {
 
         return clientData;
     }
+    private List<Client> readClientData(File file) {
+        List<Client> clientData = new ArrayList<>();
 
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                // Разделяем строку на части, используя запятую как разделитель
+                String[] parts = line.split(",");
+
+                // Предполагаем, что у нас есть все необходимые части данных
+                String username = parts[0];
+                String password = parts[1];
+                String name = parts[2];
+                String telNumber = parts[3];
+                String address = parts[4];
+
+                // Вы можете использовать только 'name' или любую другую часть данных, в зависимости от вашего выбора
+                Client client = new Client(username, password, name, telNumber, address);
+                clientData.add(client);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Обработайте исключение, если что-то пошло не так при чтении файла
+        }
+
+        return clientData;
+    }
+
+    public void deleteClient(ActionEvent actionEvent) throws IOException {
+        //Get the selected client name from the choice box
+        String selectedClientName = clientDeleteChoiceBox.getValue();
+
+        // Create a temporary list to store the clients excluding the one to be deleted
+        List<Client> updatedClients = new ArrayList<>();
+
+        // Read the existing clients from the file
+        List<Client> existingClients = readClientData(new File("C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clients.txt"));
+
+        // Iterate through the existing clients and add to the updated list except for the one to be deleted
+        for (Client client : existingClients) {
+            if (!client.getName().equals(selectedClientName)) {
+                updatedClients.add(client);
+            }
+        }
+
+        // Update the file with the modified list of clients
+        updateDataFile("C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clients.txt", updatedClients);
+
+        // Refresh the TableView
+        scanClientDataFile();
+
+    }
+    private void updateDataFile(String filename, List<Client> clients) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+            for (Client client : clients) {
+                // Format the line before writing to the file
+                String line = String.format("%s,%s,%s,%s,%s",
+                        client.getUsername(), client.getPassword(), client.getName(),
+                        client.getTelNumber(), client.getAddress());
+                writer.write(line);
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Handle any exceptions that occur during the file update
+        }
+    }
 
 }
