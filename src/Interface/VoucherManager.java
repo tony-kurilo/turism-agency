@@ -14,7 +14,7 @@ class VoucherManager {
              BufferedWriter writer = new BufferedWriter(fileWriter)) {
 
             // Преобразовать данные из объекта Voucher в строку
-            String data = voucher.getClientName() + "," +
+            String data = voucher.getUsername() + "," +
                     voucher.getCountry() + "," +
                     voucher.getCity() + "," +
                     voucher.getHotel() + "," +

@@ -1,1 +1,2 @@
-tony,France,Paris,hotelF1,2023-11-22,2023-11-28,В обробці, ,1
+tony,France,Paris,hotelF1,2023-11-22,2023-11-28,Відмова,2400,1
+tony,France,Paris,hotelF1,2023-11-22,2023-11-27,В обробці, ,2

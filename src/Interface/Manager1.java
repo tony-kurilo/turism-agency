@@ -53,11 +53,20 @@ public class Manager1 {
 
 
     public void switchToVouchers(javafx.event.ActionEvent actionEvent) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("manager2.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("manager2.fxml"));
+        Parent root = loader.load();
+        Manager2 manager2controller = loader.getController();
+        manager2controller.scanClientDataFile();
+        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+
+        /*Parent root = FXMLLoader.load(getClass().getResource("manager2.fxml"));
         stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
         scene = new Scene (root);
         stage.setScene(scene);
-        stage.show();
+        stage.show();*/
     }
     public void switchToDataAnalys(javafx.event.ActionEvent actionEvent) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("manager3.fxml"));

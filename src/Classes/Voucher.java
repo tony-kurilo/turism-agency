@@ -2,11 +2,14 @@ package Classes;
 
 import javafx.scene.control.DatePicker;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.time.LocalDate;
 
 public class Voucher {
     private static long idCounter = 0;
-    private String clientName;
+    private String username;
     private String country;
     private String city;
     private String hotel;
@@ -16,8 +19,20 @@ public class Voucher {
     private String price;
     private String id;
 
-    public Voucher(String clientName, String country, String city, String hotel, LocalDate beginDate, LocalDate endDate) {
-        this.clientName = clientName;
+    public Voucher(String username, String country, String city, String hotel, LocalDate beginDate, LocalDate endDate, String state, String price , String id) {
+        this.username = username;
+        this.country = country;
+        this.city = city;
+        this.hotel = hotel;
+        this.beginDate = beginDate;
+        this.endDate = endDate;
+        this.state = state;
+        this.price = price;
+        this.id = id; // Генерация уникального ID
+    }
+
+    public Voucher(String username, String country, String city, String hotel, LocalDate beginDate, LocalDate endDate) {
+        this.username = username;
         this.country = country;
         this.city = city;
         this.hotel = hotel;
@@ -29,11 +44,11 @@ public class Voucher {
     }
     @Override
     public String toString() {
-        return clientName + "," + country + "," + city + "," + hotel + "," + beginDate + "," + endDate + "," + state + "," + price + "," + id;
+        return username + "," + country + "," + city + "," + hotel + "," + beginDate + "," + endDate + "," + state + "," + price + "," + id;
     }
 
-    public String getClientName(){
-        return clientName;
+    public String getUsername(){
+        return username;
     }
     public String getCountry(){
         return country;
@@ -56,11 +71,43 @@ public class Voucher {
     public String getPrice(){
         return price;
     }
+
     public String getId(){
         return id;
     }
-    private synchronized long generateUniqueId(){
-        return ++idCounter;
+    public String setState(String state){
+        this.state = state;
+        return state;
+    }
+    public String setPrice(String price){
+        this.price = price;
+        return price;
+    }
+    private synchronized long generateUniqueId() {
+        // Сканируем файл clientVouchers.txt и находим максимальное значение id
+        long maxId = getMaxIdFromFile("C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clientVouchers.txt");
+
+        // Возвращаем новое уникальное значение, увеличивая максимальное значение на 1
+        return ++maxId;
+    }
+    private long getMaxIdFromFile(String filePath) {
+        long maxId = 0;
+
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length > 8) { // Убедитесь, что у строки есть достаточное количество элементов
+                    long currentId = Long.parseLong(parts[8]);
+                    maxId = Math.max(maxId, currentId);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Обработайте исключение, если что-то пошло не так при чтении файла
+        }
+
+        return maxId;
     }
 }
 /*protected String clientName;
