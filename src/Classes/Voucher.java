@@ -27,6 +27,11 @@ public class Voucher {
         this.price = " ";
         this.id = String.valueOf(generateUniqueId()); // Генерация уникального ID
     }
+    @Override
+    public String toString() {
+        return clientName + "," + country + "," + city + "," + hotel + "," + beginDate + "," + endDate + "," + state + "," + price + "," + id;
+    }
+
     public String getClientName(){
         return clientName;
     }

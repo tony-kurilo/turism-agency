@@ -26,7 +26,8 @@ public class Client3 {
     private Scene scene;
     private Parent root;
 
-    protected String ImagePath1;
+    private Voucher foundVoucher;
+
 
     @FXML
     TextField countryTextField;
@@ -82,6 +83,8 @@ public class Client3 {
     }
 
     public void searchVoucher(ActionEvent actionEvent) throws IOException {
+        hotelImageView.setImage(null);
+
         String country = countryTextField.getText();
         String city = cityTextField.getText();
         String hotel = hotelTextField.getText();
@@ -93,10 +96,12 @@ public class Client3 {
 
         // Выводим результат в соответствующие метки и изображение
         if (found) {
+            foundVoucher = new Voucher(UserData.getUsername(), country, city, hotel, beginDate, endDate);
             yesLabel.setText("Так, у наявності є така путівка");
             noLabel.setText(""); // Clear the noLabel
             displayVoucherDetails(country, city, hotel, beginDate, endDate);
         } else {
+            foundVoucher = null;
             yesLabel.setText(""); // Clear the yesLabel
             noLabel.setText("На жаль, такої путівки немає у наявності");
             clearVoucherDetails(); // Clear details if no voucher is found
@@ -123,10 +128,15 @@ public class Client3 {
 
 
                 // Проверяем совпадение
-                if (country.equals(countryFromFile) && city.equals(cityFromFile) &&
-                        hotel.equals(hotelFromFile) && beginDate.equals(beginDateFromFile) && endDate.equals(endDateFromFile)) {
+                if (country.equals(countryFromFile) && city.equals(cityFromFile) && hotel.equals(hotelFromFile) &&
+                        (beginDate.isEqual(beginDateFromFile) || beginDate.isAfter(beginDateFromFile)) &&
+                        (endDate.isEqual(endDateFromFile) || endDate.isBefore(endDateFromFile))) {
                     return true; // Найдено совпадение
                 }
+                /*if (country.equals(countryFromFile) && city.equals(cityFromFile) &&
+                        hotel.equals(hotelFromFile) && beginDate.equals(beginDateFromFile) && endDate.equals(endDateFromFile)) {
+                    return true; // Найдено совпадение
+                }*/
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -190,6 +200,24 @@ public class Client3 {
 
         return null; // Совпадение не найдено
     }
+    public void createVoucherRequest(ActionEvent actionEvent) throws IOException{
+        writeVoucherRequestInFile(foundVoucher);
+    }
 
+
+    private void writeVoucherRequestInFile(Voucher voucher) {
+        // Пропишите путь к файлу с данными клиентских путевок
+        String filePath = "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clientVouchers.txt";
+
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath, true))) {
+            // Записываем данные путевки в файл
+            bw.write(voucher.toString());
+            bw.newLine(); // Переходим на новую строку для следующей записи
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Обработайте исключение, если что-то пошло не так при записи в файл
+        }
+    }
+    
 
 }
