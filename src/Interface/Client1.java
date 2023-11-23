@@ -10,18 +10,21 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
-import javafx.scene.control.TextField;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Client1 {
     private Stage stage;
@@ -58,6 +61,10 @@ public class Client1 {
     TableColumn priceColumn;
     @FXML
     TableColumn idColumn;
+    @FXML
+    private ChoiceBox<String> deleteVoucherChoiceBox;
+    private List<Voucher> voucherList;
+
 
     public void switchToCreationVoucher(javafx.event.ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Client3.fxml"));
@@ -134,6 +141,9 @@ public class Client1 {
         stateColumn.setCellValueFactory(new PropertyValueFactory<>("state"));
         priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+
+        Set<String> uniqueIds = voucherList.stream().map(Voucher::getId).collect(Collectors.toSet());
+        deleteVoucherChoiceBox.getItems().setAll(uniqueIds);
     }
     private Voucher parseVoucherFromLine(String[] parts) {
         // Реализуйте этот метод в соответствии с вашей структурой данных (Voucher)
@@ -152,5 +162,45 @@ public class Client1 {
         String id = parts[8].trim();
 
         return new Voucher(country, city, hotel, beginDate, endDate, state , price, id);
+    }
+    public void deleteVoucher(ActionEvent actionEvent) {
+        // Получаем выбранное значение из deleteVoucherChoiceBox
+        String selectedId = deleteVoucherChoiceBox.getValue();
+
+        // Проверяем, выбрано ли значение
+        if (selectedId != null && !selectedId.isEmpty()) {
+            String filePath = "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clientVouchers.txt";
+            List<String> lines = new ArrayList<>();
+
+            try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String[] parts = line.split(",");
+                    String id = parts[8].trim();  // Предполагается, что id находится на восьмой позиции
+
+                    // Если id не совпадает с выбранным, добавляем строку в список
+                    if (!id.equals(selectedId)) {
+                        lines.add(line);
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                // Обработайте исключение, если что-то пошло не так при чтении файла
+            }
+
+            // Перезаписываем файл с обновленным списком строк
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath))) {
+                for (String line : lines) {
+                    bw.write(line);
+                    bw.newLine();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                // Обработайте исключение, если что-то пошло не так при записи файла
+            }
+
+            // После удаления обновляем TableView и ChoiceBox
+            searchMyVouchers();
+        }
     }
 }
