@@ -68,9 +68,9 @@
                   <Font size="15.0" />
                </font>
             </Label>
-            <Button layoutX="264.0" layoutY="344.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="101.0" text="Порахувати" />
-            <Button layoutX="263.0" layoutY="447.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="101.0" text="Дізнатися" />
-            <Button layoutX="264.0" layoutY="554.0" mnemonicParsing="false" prefHeight="21.0" prefWidth="101.0" text="Дізнатися" />
+            <Button fx:id="averageCostButton" layoutX="264.0" layoutY="344.0" mnemonicParsing="false" onAction="#averageVoucherCost" prefHeight="25.0" prefWidth="101.0" text="Порахувати" />
+            <Button layoutX="263.0" layoutY="447.0" mnemonicParsing="false" onAction="#averageDuration" prefHeight="25.0" prefWidth="101.0" text="Дізнатися" />
+            <Button layoutX="264.0" layoutY="554.0" mnemonicParsing="false" onAction="#countryWithHighestDemand" prefHeight="21.0" prefWidth="101.0" text="Дізнатися" />
          </children></AnchorPane>
    </children>
 </AnchorPane>
