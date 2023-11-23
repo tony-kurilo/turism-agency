@@ -53,12 +53,24 @@ public class Client3 {
     ImageView hotelImageView;
 
     public void switchToMyVouchers(javafx.event.ActionEvent actionEvent) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("client1.fxml"));
+        /*FXMLLoader loader = new FXMLLoader(getClass().getResource("client1.fxml"));
         Parent root = loader.load();
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
+        stage.show();*/
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("client1.fxml"));
+        Parent root = loader.load();
+
+        Client1 client1Controller = loader.getController();
+        client1Controller.searchMyVouchers();
+
+        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
         stage.show();
+
     }
 
     public void switchToMyData(javafx.event.ActionEvent actionEvent) throws IOException {

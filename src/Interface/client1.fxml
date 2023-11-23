@@ -27,14 +27,14 @@
          <children>
             <TableView fx:id="voucherTableView" layoutX="17.0" layoutY="48.0" prefHeight="275.0" prefWidth="595.0">
               <columns>
-                <TableColumn prefWidth="76.0" text="Країна" />
-                <TableColumn prefWidth="82.0" text="Місто" />
-                  <TableColumn prefWidth="77.0" text="Дата початку" />
-                  <TableColumn prefWidth="90.0" text="Дата закінчення" />
-                  <TableColumn prefWidth="92.0" text="Готель" />
-                  <TableColumn prefWidth="75.0" text="Стан" />
-                  <TableColumn prefWidth="65.0" text="Ціна" />
-                  <TableColumn prefWidth="37.0" text="ID" />
+                <TableColumn fx:id="countryColumn" prefWidth="76.0" text="Країна" />
+                <TableColumn fx:id="cityColumn" prefWidth="82.0" text="Місто" />
+                  <TableColumn fx:id="beginDateColumn" prefWidth="77.0" text="Дата початку" />
+                  <TableColumn fx:id="endDateColumn" prefWidth="90.0" text="Дата закінчення" />
+                  <TableColumn fx:id="hotelColumn" prefWidth="92.0" text="Готель" />
+                  <TableColumn fx:id="stateColumn" prefWidth="75.0" text="Стан" />
+                  <TableColumn fx:id="priceColumn" prefWidth="65.0" text="Ціна" />
+                  <TableColumn fx:id="idColumn" prefWidth="37.0" text="ID" />
               </columns>
             </TableView>
             <Label layoutX="30.0" layoutY="20.0" text="Ваші путівки:">

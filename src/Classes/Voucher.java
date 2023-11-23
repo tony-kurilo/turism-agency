@@ -42,6 +42,17 @@ public class Voucher {
         this.price = " ";
         this.id = String.valueOf(generateUniqueId()); // Генерация уникального ID
     }
+    public Voucher(String country, String city, String hotel, LocalDate beginDate, LocalDate endDate, String state, String price , String id) {
+        this.country = country;
+        this.city = city;
+        this.hotel = hotel;
+        this.beginDate = beginDate;
+        this.endDate = endDate;
+        this.state = state;
+        this.price = price;
+        this.id = id; // Генерация уникального ID
+    }
+
     @Override
     public String toString() {
         return username + "," + country + "," + city + "," + hotel + "," + beginDate + "," + endDate + "," + state + "," + price + "," + id;
