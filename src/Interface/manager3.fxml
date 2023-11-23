@@ -31,19 +31,19 @@
                   <Font size="15.0" />
                </font>
             </Label>
-            <TableView layoutX="30.0" layoutY="91.0" prefHeight="174.0" prefWidth="568.0">
+            <TableView fx:id="clientWhoChoseCountryTableView" layoutX="30.0" layoutY="91.0" prefHeight="174.0" prefWidth="568.0">
               <columns>
-                <TableColumn prefWidth="567.0" text="ПІБ" />
+                <TableColumn fx:id="nameColumn" prefWidth="567.0" text="ПІБ" />
               </columns>
             </TableView>
-            <ChoiceBox layoutX="44.0" layoutY="58.0" prefWidth="150.0" />
-            <Button layoutX="495.0" layoutY="58.0" mnemonicParsing="false" text="Підтвердити" />
+            <ChoiceBox fx:id="selectCountryChoiceBox" layoutX="44.0" layoutY="58.0" prefWidth="150.0" />
+            <Button layoutX="495.0" layoutY="58.0" mnemonicParsing="false" onAction="#searchClientWhoChosedCountry" text="Підтвердити" />
             <Label layoutX="44.0" layoutY="296.0" text="Середня вартість путівки:">
                <font>
                   <Font size="15.0" />
                </font>
             </Label>
-            <Label layoutX="297.0" layoutY="296.0" text="Label">
+            <Label fx:id="averageCostLabel" layoutX="297.0" layoutY="296.0" text="Label">
                <font>
                   <Font size="15.0" />
                </font>
@@ -53,7 +53,7 @@
                   <Font size="15.0" />
                </font>
             </Label>
-            <Label layoutX="297.0" layoutY="407.0" text="Label">
+            <Label fx:id="averageDurationLabel" layoutX="297.0" layoutY="407.0" text="Label">
                <font>
                   <Font size="15.0" />
                </font>
@@ -63,7 +63,7 @@
                   <Font size="15.0" />
                </font>
             </Label>
-            <Label layoutX="296.0" layoutY="507.0" text="Label">
+            <Label fx:id="countryWithHighestDemandLabel" layoutX="296.0" layoutY="507.0" text="Label">
                <font>
                   <Font size="15.0" />
                </font>
