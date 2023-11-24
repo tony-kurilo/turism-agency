@@ -123,7 +123,7 @@ public class Client3 {
         // Пропишите путь к файлу с данными
         String filePath = "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\vouchers.txt";
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;

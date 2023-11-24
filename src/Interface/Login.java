@@ -67,7 +67,7 @@ public class Login {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
-                if (parts.length == 5) {
+                if (parts.length >= 5 && parts.length <= 6) {
                     String storedUsername = parts[0];
                     String storedPassword = parts[1];
                     if (storedUsername.equals(username) && storedPassword.equals(password)) {

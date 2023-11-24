@@ -18,6 +18,7 @@ public class Voucher {
     private String state;
     private String price;
     private String id;
+    private String url;
 
     public Voucher(String username, String country, String city, String hotel, LocalDate beginDate, LocalDate endDate, String state, String price , String id) {
         this.username = username;
@@ -52,10 +53,24 @@ public class Voucher {
         this.price = price;
         this.id = id; // Генерация уникального ID
     }
+    public Voucher(String country, String city, String hotel, LocalDate beginDate, LocalDate endDate) {
+        this.country = country;
+        this.city = city;
+        this.hotel = hotel;
+        this.beginDate = beginDate;
+        this.endDate = endDate;
+    }
+    public Voucher(String hotel, String url) {
+        this.hotel = hotel;
+        this.url = url;
+    }
 
     @Override
     public String toString() {
         return username + "," + country + "," + city + "," + hotel + "," + beginDate + "," + endDate + "," + state + "," + price + "," + id;
+    }
+    public String toString1() {
+        return country + "," + city + "," + hotel + "," + beginDate + "," + endDate;
     }
 
     public String getUsername(){
@@ -69,6 +84,9 @@ public class Voucher {
     }
     public String getHotel(){
         return hotel;
+    }
+    public String getUrl(){
+        return url;
     }
     public LocalDate getBeginDate(){
         return beginDate;

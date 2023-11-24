@@ -237,7 +237,7 @@ public class Hrmanager1 {
         Parent root = loader.load();
 
         Hrmanager2 hrmanager2Controller = loader.getController();
-        //client3Controller.displayUserData();
+        hrmanager2Controller.scanVoucherFile();
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
