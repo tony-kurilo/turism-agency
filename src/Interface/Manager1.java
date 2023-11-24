@@ -25,6 +25,8 @@ public class Manager1 {
     @FXML
     private Label alertLabel;
     @FXML
+    private TableColumn<Client, String> usernameColumn;
+    @FXML
     private TableColumn<Client, String> nameColumn;
     @FXML
     private TableColumn<Client, String> telNumberColumn;
@@ -36,6 +38,7 @@ public class Manager1 {
     private TextField usernameTextField;
     @FXML
     private TextField passwordTextField;
+
     @FXML
     private TextField nameTextField;
     @FXML
@@ -110,8 +113,8 @@ public class Manager1 {
         Parent root = loader.load();
 
         Manager11  manager11Controller = loader.getController();
-        String selectedClientName = clientEditChoiceBox.getValue();
-        ClientData.setClientName(selectedClientName);
+        String selectedUserName = clientEditChoiceBox.getValue();
+        UserData.setUsername(selectedUserName);
         manager11Controller.displayUserData();
 
         Stage newStage = new Stage();
@@ -145,7 +148,7 @@ public class Manager1 {
         }
 
         // Создание объекта Client и установка значений атрибутов
-        Client client = new Client(username, password, name, telNumber, address);
+        Client client = new Client(username, password, name, telNumber, address, "Touristique");
 
         // Добавление клиента в коллекцию
         clients.add(client);
@@ -185,9 +188,9 @@ public class Manager1 {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename, true))) {
             for (Client client : clients) {
                 // Форматирование строки перед записью в файл
-                String line = String.format("%s,%s,%s,%s,%s",
+                String line = String.format("%s,%s,%s,%s,%s,%s",
                         client.getUsername(), client.getPassword(), client.getName(),
-                        client.getTelNumber(), client.getAddress());
+                        client.getTelNumber(), client.getAddress(), client.getAgencyName());
                 writer.write(line);
                 writer.newLine();
             }
@@ -201,20 +204,19 @@ public class Manager1 {
         // Пропишите путь к файлу с данными
         String filePath = "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clients.txt";
 
-        List<String> clientNames = readClientName(new File(filePath));
-        clientEditChoiceBox.getItems().setAll(clientNames);
-        clientDeleteChoiceBox.getItems().setAll(clientNames);
+        List<String> clientUserNames = readClientName(new File(filePath));
+        clientEditChoiceBox.getItems().setAll(clientUserNames);
+        clientDeleteChoiceBox.getItems().setAll(clientUserNames);
 
 
         clientsTableView.setItems(clientsList);
         List<Client> clientData = readClientData(new File(filePath));
         clientsList.clear();
         clientsList.addAll(clientData);
+        usernameColumn.setCellValueFactory(new PropertyValueFactory<>("username"));
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         telNumberColumn.setCellValueFactory(new PropertyValueFactory<>("telNumber"));
         addressColumn.setCellValueFactory(new PropertyValueFactory<>("address"));
-
-
     }
 
     private List<String> readClientName(File file) {
@@ -232,9 +234,10 @@ public class Manager1 {
                 String name = parts[2];
                 String telNumber = parts[3];
                 String address = parts[4];
+                String agencyName = parts[5];
 
                 // Вы можете использовать только 'name' или любую другую часть данных, в зависимости от вашего выбора
-                clientData.add(name);
+                clientData.add(username);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -258,9 +261,10 @@ public class Manager1 {
                 String name = parts[2];
                 String telNumber = parts[3];
                 String address = parts[4];
+                String agencyName = parts[5];
 
                 // Вы можете использовать только 'name' или любую другую часть данных, в зависимости от вашего выбора
-                Client client = new Client(username, password, name, telNumber, address);
+                Client client = new Client(username, password, name, telNumber, address, agencyName);
                 clientData.add(client);
             }
         } catch (IOException e) {
@@ -273,7 +277,7 @@ public class Manager1 {
 
     public void deleteClient(ActionEvent actionEvent) throws IOException {
         //Get the selected client name from the choice box
-        String selectedClientName = clientDeleteChoiceBox.getValue();
+        String selectedUserName = clientDeleteChoiceBox.getValue();
 
         // Create a temporary list to store the clients excluding the one to be deleted
         List<Client> updatedClients = new ArrayList<>();
@@ -283,7 +287,7 @@ public class Manager1 {
 
         // Iterate through the existing clients and add to the updated list except for the one to be deleted
         for (Client client : existingClients) {
-            if (!client.getName().equals(selectedClientName)) {
+            if (!client.getUsername().equals(selectedUserName)) {
                 updatedClients.add(client);
             }
         }
@@ -299,9 +303,9 @@ public class Manager1 {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
             for (Client client : clients) {
                 // Format the line before writing to the file
-                String line = String.format("%s,%s,%s,%s,%s",
+                String line = String.format("%s,%s,%s,%s,%s,%s",
                         client.getUsername(), client.getPassword(), client.getName(),
-                        client.getTelNumber(), client.getAddress());
+                        client.getTelNumber(), client.getAddress(), client.getAgencyName());
                 writer.write(line);
                 writer.newLine();
             }

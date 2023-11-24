@@ -43,7 +43,7 @@ public class Manager11 {
 
     public void displayUserData() {
         // Получение username из UserSession
-        String storedClientName = ClientData.getClientName();
+        String storedUserName = UserData.getUsername();
 
         // Путь к файлу с данными пользователя
         String filePath = "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clients.txt";
@@ -53,14 +53,15 @@ public class Manager11 {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
-                if (parts.length == 5) {
+                if (parts.length == 6) {
                     String username = parts[0];
                     String password = parts[1];
                     String name = parts[2];
                     String telNumber = parts[3];
                     String address = parts[4];
+                    String agencyName = parts[5];
                     // Если найдено совпадение, отображаем имя в Label
-                    if (storedClientName.equals(name)) {
+                    if (storedUserName.equals(username)) {
                         usernameLabel.setText(username);
                         passwordLabel.setText(password);
                         nameLabel.setText(name);
@@ -85,7 +86,7 @@ public class Manager11 {
         String name = nameTextField.getText();
         String telNumber = telNumberTextField.getText();
         String address = addressTextField.getText();
-        String clientName = ClientData.getClientName();
+        String userName = UserData.getUsername();
 
         if (username.isEmpty() && password.isEmpty() && name.isEmpty() && telNumber.isEmpty() && address.isEmpty()) {
             // Если все поля пусты, нет необходимости в изменениях
@@ -102,14 +103,15 @@ public class Manager11 {
             while ((line = reader.readLine()) != null) {
                 lines.add(line);
                 String[] tokens = line.split(","); // Предполагаем, что атрибуты разделены запятой
-                String currentClientName = tokens[2].trim();
+                String currentUserName = tokens[0].trim();
 
-                if (currentClientName.equals(clientName)) {
+                if (currentUserName.equals(userName)) {
                     String oldUsername = tokens[0].trim();
                     String oldPassword = tokens[1].trim();
                     String oldName = tokens[2].trim();
                     String oldTelNumber = tokens[3].trim();
                     String oldAddress = tokens[4].trim();
+                    String oldAgencyName = tokens[5].trim();
 
                     // Найден нужный клиент, обновляем данные
                     if (!username.isEmpty()) tokens[0] = username.trim();

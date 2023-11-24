@@ -116,7 +116,7 @@ public class Login {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("hrmanager1.fxml"));
         Parent root = loader.load();
         Hrmanager1 hrmanager1Controller = loader.getController();
-        hrmanager1Controller.refreshButton();
+        hrmanager1Controller.scanManagerFile();
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);

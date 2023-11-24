@@ -9,7 +9,7 @@ public class Client {
     private String name;
     private String telNumber;
     private String address;
-    //private List<String> data;
+    private String agencyName;
 
     public Client() {}
 
@@ -20,7 +20,14 @@ public class Client {
         this.telNumber = telNumber;
         this.address = address;
     }
-
+    public Client(String username, String password, String name, String telNumber, String address, String agencyName) {
+        this.username = username;
+        this.password = password;
+        this.name = name;
+        this.telNumber = telNumber;
+        this.address = address;
+        this.agencyName = agencyName;
+    }
 
 
     public void setName(String name) {
@@ -55,7 +62,9 @@ public class Client {
     public String getTelNumber() {
         return telNumber;
     }
-
+    public String getAgencyName() {
+        return agencyName;
+    }
     public boolean checkClientExists(String clientName) {
         // Реализация метода checkClientExists
         return false;

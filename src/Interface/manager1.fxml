@@ -29,9 +29,10 @@
          <children>
             <TableView fx:id="clientsTableView" layoutX="23.0" layoutY="63.0" onSort="#scanClientDataFile" prefHeight="214.0" prefWidth="582.0">
               <columns>
-                <TableColumn fx:id="nameColumn" prefWidth="216.0" text="ПІБ" />
-                <TableColumn fx:id="telNumberColumn" prefWidth="138.0" text="Номер тел." />
-                  <TableColumn fx:id="addressColumn" prefWidth="227.0" text="Адреса проживання" />
+                <TableColumn fx:id="usernameColumn" prefWidth="111.0" text="Логін" />
+                <TableColumn fx:id="nameColumn" prefWidth="185.0" text="ПІБ" />
+                  <TableColumn fx:id="telNumberColumn" prefWidth="123.0" text="Номер тел." />
+                  <TableColumn fx:id="addressColumn" prefWidth="162.0" text="Адреса проживання" />
               </columns>
             </TableView>
             <Label layoutX="23.0" layoutY="32.0" text="Список клієнтів:">

@@ -1,113 +1,59 @@
 package Classes;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Manager extends Worker {
+    protected String name;
 
+    public Manager() {}
 
-    public Manager() {
-    }
-
-    public Manager(String name, String agencyName, String telNumber) {
-        super(name, agencyName, telNumber);
-    }
-
-    public void setName(String name) {
+    public Manager(String login, String password,String name, String telNumber, String agencyName ) {
+        super(login, password, agencyName, telNumber);
         this.name = name;
     }
-
-    public void setTelNumber(String telNumber) {
+    public Manager(String login, String name, String telNumber){
+        this.login = login;
+        this.name = name;
         this.telNumber = telNumber;
     }
-
-    public void setAgencyName(String agencyName) {
-        this.agencyName = agencyName;
+    public StringProperty loginProperty() {
+        return new SimpleStringProperty(this.login);
     }
 
-    public String getName() {
+    public String getLogin(){
+        return login;
+    }
+    public String getPassword(){
+        return password;
+    }
+    public String getName(){
         return name;
     }
-
-    public String getTelNumber() {
+    public String getTelNumber(){
         return telNumber;
     }
-
-    public String getAgencyName() {
+    public String getAgencyName(){
         return agencyName;
     }
 
-    public static void readDataFromFile() {
-        // Реализация метода readDataFromFile
+    public StringProperty passwordProperty() {
+        return new SimpleStringProperty(this.password);
     }
 
-    public void registerClient() {
-        // Реализация метода registerClient
+    public StringProperty agencyNameProperty() {
+        return new SimpleStringProperty(this.agencyName);
     }
 
-    public boolean checkClientExists(String clientName) {
-        // Реализация метода checkClientExists
-        return false;
+    public StringProperty telNumberProperty() {
+        return new SimpleStringProperty(this.telNumber);
     }
 
-    public void authorizeClient() {
-        // Реализация метода authorizeClient
+    public StringProperty nameProperty() {
+        return new SimpleStringProperty(this.name);
     }
 
-    public void displayClientInformation(String clientName) {
-        // Реализация метода displayClientInformation
-    }
-
-    public void showClientVouchers(String clientName) {
-        // Реализация метода showClientVouchers
-    }
-
-    public void showClientList() {
-        // Реализация метода showClientList
-    }
-
-    public void editClient() {
-        // Реализация метода editClient
-    }
-
-    public void deleteClient() {
-        // Реализация метода deleteClient
-    }
-
-    public boolean checkManagerExists(String managerName) {
-        // Реализация метода checkManagerExists
-        return false;
-    }
-
-    public void authorizeManager() {
-        // Реализация метода authorizeManager
-    }
-
-    public void createVoucher(String clientName) {
-        // Реализация метода createVoucher
-    }
-
-    public void editVoucher(String clientName) {
-        // Реализация метода editVoucher
-    }
-
-    public void deleteVoucher(String clientName) {
-        // Реализация метода deleteVoucher
-    }
-
-    public void showClientWhoChoseCountry() {
-        // Реализация метода showClientWhoChoseCountry
-    }
-
-    public void showAverageCostVoucher() {
-        // Реализация метода showAverageCostVoucher
-    }
-
-    public void showAverageDurationTrip() {
-        // Реализация метода showAverageDurationTrip
-    }
-
-    public void showCountryWithHighestDemand() {
-        // Реализация метода showCountryWithHighestDemand
-    }
 }

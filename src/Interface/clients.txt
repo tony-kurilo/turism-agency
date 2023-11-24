@@ -1,4 +1,3 @@
-tony,qwe,Курило Антон Андрійович,3806546213123,kugrdigm@gmail.com
-dfgdfdffd,123123,fg,ghj,35
-hjhjkhkhh,2315,fg456,ghj65,3556
-dfgdfdfdfdf,dfgfdg,dfgdfdf,dfgdfg,dfgdfg
+tony,qwe,Курило Антон Андрійович,3806546213123,kugrdigm@gmail.com,Touristique
+portalHater,qwerty123,Геральт Рівійський,32890534534,Туссент,Touristique
+hjhjkhkhh,2315,fg456,ghj65,3556,Touristique

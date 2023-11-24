@@ -3,18 +3,14 @@ package Classes;
 import java.util.ArrayList;
 import java.util.List;
 public class HRManager extends Worker {
-    private List<String> data;
-    private List<Manager> managers;
+    protected String name;
 
     public HRManager() {
-        data = new ArrayList<>();
-        managers = new ArrayList<>();
     }
 
-    public HRManager(String name, String agencyName, String telNumber) {
-        super(name, agencyName, telNumber);
-        data = new ArrayList<>();
-        managers = new ArrayList<>();
+    public HRManager(String login, String password, String name, String telNumber, String agencyName) {
+        super(login, password, agencyName, telNumber);
+        this.name = name;
     }
 
     public void createManager() {
