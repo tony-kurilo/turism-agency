@@ -42,13 +42,10 @@ public class Manager11 {
 
 
     public void displayUserData() {
-        // Получение username из UserSession
         String storedUserName = UserData.getUsername();
 
-        // Путь к файлу с данными пользователя
         String filePath = "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clients.txt";
 
-        // Поиск данных пользователя в файле
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -71,11 +68,9 @@ public class Manager11 {
                     }
                 }
             }
-            // Если не найдено совпадение
             nameLabel.setText("Имя не найдено");
         } catch (IOException e) {
             e.printStackTrace();
-            // Обработка ошибок чтения файла
         }
     }
 
@@ -89,12 +84,10 @@ public class Manager11 {
         String userName = UserData.getUsername();
 
         if (username.isEmpty() && password.isEmpty() && name.isEmpty() && telNumber.isEmpty() && address.isEmpty()) {
-            // Если все поля пусты, нет необходимости в изменениях
             System.out.println("Нет данных для изменения.");
             return;
         }
 
-        // Чтение данных из файла и поиск клиента по атрибуту ClientName
         List<String> lines = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
@@ -113,14 +106,12 @@ public class Manager11 {
                     String oldAddress = tokens[4].trim();
                     String oldAgencyName = tokens[5].trim();
 
-                    // Найден нужный клиент, обновляем данные
                     if (!username.isEmpty()) tokens[0] = username.trim();
                     if (!password.isEmpty()) tokens[1] = password.trim();
                     if (!name.isEmpty()) tokens[2] = name.trim();
                     if (!telNumber.isEmpty()) tokens[3] = telNumber.trim();
                     if (!address.isEmpty()) tokens[4] = address.trim();
 
-                    // Обновляем строку в списке
                     lines.set(lines.size() - 1, String.join(",", tokens));
 
                     // Обновляем Label, используя старые значения при необходимости
@@ -135,7 +126,6 @@ public class Manager11 {
             e.printStackTrace();
         }
 
-        // Перезаписываем файл с обновленными данными
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
             for (String line : lines) {
                 writer.write(line);

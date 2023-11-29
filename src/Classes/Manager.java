@@ -40,20 +40,7 @@ public class Manager extends Worker {
         return agencyName;
     }
 
-    public StringProperty passwordProperty() {
-        return new SimpleStringProperty(this.password);
-    }
 
-    public StringProperty agencyNameProperty() {
-        return new SimpleStringProperty(this.agencyName);
-    }
 
-    public StringProperty telNumberProperty() {
-        return new SimpleStringProperty(this.telNumber);
-    }
-
-    public StringProperty nameProperty() {
-        return new SimpleStringProperty(this.name);
-    }
 
 }

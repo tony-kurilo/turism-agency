@@ -37,7 +37,7 @@ public class Login {
 
 
         if (username.isEmpty() || password.isEmpty()) {
-            errorLabel.setText("Заполните оба поля.");
+            errorLabel.setText("Заповніть оба поля.");
             return;
         }
         boolean clientMatch = checkCredentials("C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clients.txt", username, password);
@@ -81,11 +81,6 @@ public class Login {
         return false;
     }
     public void switchToClient(javafx.event.ActionEvent actionEvent) throws IOException {
-        /*Parent root = FXMLLoader.load(getClass().getResource("Client3.fxml"));
-        stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
-        scene = new Scene (root);
-        stage.setScene(scene);
-        stage.show();*/
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Client3.fxml"));
         Parent root = loader.load();
@@ -106,11 +101,7 @@ public class Login {
         scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
-        /*Parent root = FXMLLoader.load(getClass().getResource("manager1.fxml"));
-        stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
-        scene = new Scene (root);
-        stage.setScene(scene);
-        stage.show();*/
+
     }
     public void switchToHRManager(javafx.event.ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("hrmanager1.fxml"));

@@ -1,7 +1,5 @@
 package Classes;
 
-import java.util.ArrayList;
-import java.util.List;
 public class HRManager extends Worker {
     protected String name;
 
@@ -13,28 +11,4 @@ public class HRManager extends Worker {
         this.name = name;
     }
 
-    public void createManager() {
-        // Реализация метода createManager
-    }
-
-    public void editManager() {
-        // Реализация метода editManager
-    }
-
-    public void showManagerList() {
-        // Реализация метода showManagerList
-    }
-
-    public void authorize() {
-        // Реализация метода authorize
-    }
-
-    public boolean checkHRManagerExists(String hrManagerName) {
-        // Реализация метода checkHRManagerExists
-        return false;
-    }
-
-    public void deleteManager() {
-        // Реализация метода deleteManager
-    }
 }

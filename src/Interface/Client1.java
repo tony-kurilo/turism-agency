@@ -69,10 +69,7 @@ public class Client1 {
     public void switchToCreationVoucher(javafx.event.ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Client3.fxml"));
         Parent root = loader.load();
-
-        //Client3 client3Controller = loader.getController();
-        //client3Controller.displayUserData();
-
+        Client3 client3Controller = loader.getController();
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
@@ -102,22 +99,18 @@ public class Client1 {
 
     public void searchMyVouchers(){
         String username = UserData.getUsername();
-        // Создаем список для хранения данных
         ObservableList<Voucher> voucherList = FXCollections.observableArrayList();
 
-        // Пропишите путь к файлу с данными
         String filePath = "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clientVouchers.txt";
 
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = br.readLine()) != null) {
-                // Разделяем строку на части, используя запятую как разделитель
+
                 String[] parts = line.split(",");
 
-                // Предполагаем, что у нас есть все необходимые части данных
                 String voucherUsername = parts[0].trim();
 
-                // Проверяем совпадение с именем пользователя
                 if (username.equals(voucherUsername)) {
                     Voucher voucher = parseVoucherFromLine(parts);
                     voucherList.add(voucher);
@@ -125,10 +118,9 @@ public class Client1 {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            // Обработайте исключение, если что-то пошло не так при чтении файла
+
         }
 
-        // Очищаем TableView перед добавлением новых данных
         voucherTableView.getItems().clear();
 
         // Добавляем данные в TableView
@@ -146,12 +138,7 @@ public class Client1 {
         deleteVoucherChoiceBox.getItems().setAll(uniqueIds);
     }
     private Voucher parseVoucherFromLine(String[] parts) {
-        // Реализуйте этот метод в соответствии с вашей структурой данных (Voucher)
-        // В зависимости от порядка и структуры данных в файле
-        // Пример: Voucher voucher = new Voucher(parts[0], parts[1], ..., parts[n]);
-        // return voucher;
 
-        // Пример (если данные в файле имеют определенный порядок):
         String country = parts[1].trim();
         String city = parts[2].trim();
         String hotel = parts[3].trim();
@@ -164,10 +151,8 @@ public class Client1 {
         return new Voucher(country, city, hotel, beginDate, endDate, state , price, id);
     }
     public void deleteVoucher(ActionEvent actionEvent) {
-        // Получаем выбранное значение из deleteVoucherChoiceBox
         String selectedId = deleteVoucherChoiceBox.getValue();
 
-        // Проверяем, выбрано ли значение
         if (selectedId != null && !selectedId.isEmpty()) {
             String filePath = "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clientVouchers.txt";
             List<String> lines = new ArrayList<>();
@@ -176,19 +161,16 @@ public class Client1 {
                 String line;
                 while ((line = br.readLine()) != null) {
                     String[] parts = line.split(",");
-                    String id = parts[8].trim();  // Предполагается, что id находится на восьмой позиции
+                    String id = parts[8].trim();
 
-                    // Если id не совпадает с выбранным, добавляем строку в список
                     if (!id.equals(selectedId)) {
                         lines.add(line);
                     }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
-                // Обработайте исключение, если что-то пошло не так при чтении файла
             }
 
-            // Перезаписываем файл с обновленным списком строк
             try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath))) {
                 for (String line : lines) {
                     bw.write(line);
@@ -196,10 +178,9 @@ public class Client1 {
                 }
             } catch (IOException e) {
                 e.printStackTrace();
-                // Обработайте исключение, если что-то пошло не так при записи файла
+
             }
 
-            // После удаления обновляем TableView и ChoiceBox
             searchMyVouchers();
         }
     }

@@ -42,13 +42,13 @@
                   <Font size="15.0" />
                </font>
             </Label>
-            <Label layoutX="17.0" layoutY="371.0" text="Оберіть запит, який бажаєте скасувати:">
+            <Label layoutX="181.0" layoutY="383.0" text="Оберіть запит, який бажаєте скасувати">
                <font>
                   <Font size="15.0" />
                </font>
             </Label>
-            <ChoiceBox fx:id="deleteVoucherChoiceBox" layoutX="137.0" layoutY="419.0" prefWidth="150.0" />
-            <Button layoutX="329.0" layoutY="419.0" mnemonicParsing="false" onAction="#deleteVoucher" text="Скасувати" />
+            <ChoiceBox fx:id="deleteVoucherChoiceBox" layoutX="239.0" layoutY="436.0" prefWidth="150.0" />
+            <Button layoutX="279.0" layoutY="493.0" mnemonicParsing="false" onAction="#deleteVoucher" text="Скасувати" />
          </children>
       </AnchorPane>
    </children>

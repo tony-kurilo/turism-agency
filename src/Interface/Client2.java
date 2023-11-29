@@ -27,24 +27,20 @@ public class Client2 {
     public Label addressLabel;
 
     public void displayUserData() {
-        // Получение username из UserSession
         String username = UserData.getUsername();
 
-        // Путь к файлу с данными пользователя
         String filePath = "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clients.txt";
 
-        // Поиск данных пользователя в файле
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
-                if (parts.length == 5) {
+                if (parts.length == 6) {
                     String storedUsername = parts[0];
                     String name = parts[2];
                     String tel_number = parts[3];
                     String address = parts[4];
 
-                    // Если найдено совпадение, отображаем имя в Label
                     if (storedUsername.equals(username)) {
                         nameLabel.setText(name);
                         numberLabel.setText(tel_number);
@@ -53,24 +49,27 @@ public class Client2 {
                     }
                 }
             }
-            // Если не найдено совпадение
-            nameLabel.setText("Имя не найдено");
+            nameLabel.setText("Ім'я не знайдено");
         } catch (IOException e) {
             e.printStackTrace();
-            // Обработка ошибок чтения файла
         }
     }
     public void switchToVouchers(javafx.event.ActionEvent actionEvent) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("Client3.fxml"));
-        stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
-        scene = new Scene (root);
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("client3.fxml"));
+        Parent root = loader.load();
+        Client3 client3Controller = loader.getController();
+        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
     }
     public void switchToMyVouchers(javafx.event.ActionEvent actionEvent) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("client1.fxml"));
-        stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
-        scene = new Scene (root);
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("client1.fxml"));
+        Parent root = loader.load();
+        Client1 client1Controller = loader.getController();
+        client1Controller.searchMyVouchers();
+        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
     }
