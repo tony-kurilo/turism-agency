@@ -75,7 +75,6 @@ public class Hrmanager1 {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            // Handle the exception appropriately
         }
 
         loginColumn.setCellValueFactory(new PropertyValueFactory<>("login"));
@@ -86,46 +85,38 @@ public class Hrmanager1 {
 
         Set<String> uniqueLogins = managers.stream().map(Manager::getLogin).collect(Collectors.toSet());
 
-        // Устанавливаем логины в ChoiceBox
         managerEditChoceBox.setItems(FXCollections.observableArrayList(uniqueLogins));
         managerDeleteChoiceBox.setItems(FXCollections.observableArrayList(uniqueLogins));
 
     }
     public void createManagerProfile(ActionEvent actionEvent){
-        // Получаем введенные данные из текстовых полей
         String login = loginTextField.getText().trim();
         String password = passwordTextField.getText().trim();
         String name = nameTextField.getText().trim();
         String telNumber = telNumberTextField.getText().trim();
 
-        // Проверяем, что все поля заполнены
         if (login.isEmpty() || password.isEmpty() || name.isEmpty() || telNumber.isEmpty()) {
             alertCreateLabel.setText("Заповніть усі поля");
             return;
         }
         alertCreateLabel.setText("");
         if (checkForDuplicates(login, telNumber, "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\managers.txt")) {
-            // Ваш код обработки ошибки (например, вы можете вывести сообщение об ошибке)
             alertCreate2Label.setText("Профіль з таким логіном\n чи телефоном вже існує");
             return;
         }
         alertCreate2Label.setText("");
-        // Создаем объект Manager с фиксированным значением agencyName
         Manager manager = new Manager(login, password, name, telNumber, "Touristique");
 
-        // Добавляем объект Manager в файл с данными
         addManagerToFile(manager, "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\managers.txt");
         scanManagerFile();
     }
     private void addManagerToFile(Manager manager, String filePath) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
-            // Добавляем данные в файл
             writer.write(manager.getLogin() + "," + manager.getPassword() + "," +
                     manager.getName() + "," + manager.getTelNumber() + "," + manager.getAgencyName());
             writer.newLine();
         } catch (IOException e) {
             e.printStackTrace();
-            // Обработка ошибок при записи в файл
         }
     }
     private boolean checkForDuplicates(String username, String telNumber, String filePath) {
@@ -137,18 +128,16 @@ public class Hrmanager1 {
                     String existingUsername = parts[0].trim();
                     String existingTelNumber = parts[3].trim();
 
-                    // Проверяем, существует ли логин или номер телефона
                     if (username.equals(existingUsername) || telNumber.equals(existingTelNumber)) {
-                        return true; // Дубликат найден
+                        return true;
                     }
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
-            // Обработка ошибок чтения файла
         }
 
-        return false; // Дубликаты не найдены
+        return false;
     }
     public void editManagerProfile(ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("hrmanager11.fxml"));
@@ -171,55 +160,44 @@ public class Hrmanager1 {
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = br.readLine()) != null) {
-                // Разделяем строку на части, используя запятую как разделитель
                 String[] parts = line.split(",");
 
-                // Предполагаем, что у нас есть все необходимые части данных
                 String username = parts[0];
                 String password = parts[1];
                 String name = parts[2];
                 String telNumber = parts[3];
                 String agencyName = parts[4];
 
-                // Вы можете использовать только 'name' или любую другую часть данных, в зависимости от вашего выбора
                 Manager manager = new Manager(username, password, name, telNumber, agencyName);
                 managerData.add(manager);
             }
         } catch (IOException e) {
             e.printStackTrace();
-            // Обработайте исключение, если что-то пошло не так при чтении файла
         }
 
         return managerData;
     }
 
     public void deleteManagerProfile(ActionEvent actionEvent) throws IOException{
-        //Get the selected client name from the choice box
         String selectedUserName = managerDeleteChoiceBox.getValue();
 
-        // Create a temporary list to store the clients excluding the one to be deleted
         java.util.List<Manager> updatedManagers = new ArrayList<>();
 
-        // Read the existing clients from the file
         List<Manager> existingManagers = readManagerData(new File("C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\managers.txt"));
 
-        // Iterate through the existing clients and add to the updated list except for the one to be deleted
         for (Manager manager : existingManagers) {
             if (!manager.getLogin().equals(selectedUserName)) {
                 updatedManagers.add(manager);
             }
         }
 
-        // Update the file with the modified list of clients
         updateDataFile("C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\managers.txt", updatedManagers);
 
-        // Refresh the TableView
         scanManagerFile();
     }
     private void updateDataFile(String filename, List<Manager> managers) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
             for (Manager manager : managers) {
-                // Format the line before writing to the file
                 String line = String.format("%s,%s,%s,%s,%s",
                         manager.getLogin(), manager.getPassword(), manager.getName(),
                         manager.getTelNumber(),  manager.getAgencyName());
@@ -228,7 +206,6 @@ public class Hrmanager1 {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            // Handle any exceptions that occur during the file update
         }
     }
 

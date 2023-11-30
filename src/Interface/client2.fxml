@@ -26,7 +26,7 @@
                   <Font size="15.0" />
                </font>
             </Label>
-            <Label fx:id="nameLabel" layoutX="54.0" layoutY="118.0" text="Label">
+            <Label fx:id="nameLabel" layoutX="54.0" layoutY="118.0">
                <font>
                   <Font size="15.0" />
                </font>
@@ -41,12 +41,12 @@
                   <Font size="15.0" />
                </font>
             </Label>
-            <Label fx:id="numberLabel" layoutX="54.0" layoutY="206.0" text="Label">
+            <Label fx:id="numberLabel" layoutX="54.0" layoutY="206.0">
                <font>
                   <Font size="15.0" />
                </font>
             </Label>
-            <Label fx:id="addressLabel" layoutX="54.0" layoutY="285.0" text="Label">
+            <Label fx:id="addressLabel" layoutX="54.0" layoutY="285.0">
                <font>
                   <Font size="15.0" />
                </font>

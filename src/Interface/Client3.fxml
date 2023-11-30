@@ -58,34 +58,36 @@
             </Label>
             <DatePicker fx:id="endDatePicker" layoutX="208.0" layoutY="180.0" prefHeight="25.0" prefWidth="149.0" />
             <Button layoutX="407.0" layoutY="180.0" mnemonicParsing="false" onAction="#searchVoucher" prefHeight="25.0" prefWidth="101.0" text="Пошук" />
-            <Label fx:id="yesLabel" layoutX="265.0" layoutY="272.0" text="Label">
+            <Label fx:id="yesLabel" layoutX="205.0" layoutY="272.0">
                <font>
                   <Font size="15.0" />
                </font>
             </Label>
-            <Label fx:id="noLabel" layoutX="265.0" layoutY="282.0" text="Label">
+            <Label fx:id="noLabel" layoutX="187.0" layoutY="272.0">
                <font>
                   <Font size="15.0" />
                </font>
             </Label>
             <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="34.0" layoutY="333.0" pickOnBounds="true" preserveRatio="true" />
-            <Label fx:id="countryCityLabel" layoutX="265.0" layoutY="355.0" text="Label">
+            <Label fx:id="countryCityLabel" layoutX="279.0" layoutY="354.0">
                <font>
                   <Font size="15.0" />
                </font>
             </Label>
-            <Label fx:id="hotelLabel" layoutX="265.0" layoutY="387.0" text="Label">
+            <Label fx:id="hotelLabel" layoutX="279.0" layoutY="388.0">
                <font>
                   <Font size="15.0" />
                </font>
             </Label>
-            <Label fx:id="datesLabel" layoutX="265.0" layoutY="417.0" text="Label">
+            <Label fx:id="datesLabel" layoutX="279.0" layoutY="417.0">
                <font>
                   <Font size="15.0" />
                </font>
             </Label>
-            <Button layoutX="228.0" layoutY="510.0" mnemonicParsing="false" onAction="#createVoucherRequest" prefHeight="37.0" prefWidth="121.0" text="Створити запит" />
+            <Button fx:id="searchButton" layoutX="240.0" layoutY="500.0" mnemonicParsing="false" onAction="#createVoucherRequest" prefHeight="37.0" prefWidth="121.0" text="Створити запит" visible="false" />
             <ImageView fx:id="hotelImageView" fitHeight="150.0" fitWidth="200.0" layoutX="46.0" layoutY="323.0" pickOnBounds="true" preserveRatio="true" />
+            <AnchorPane fx:id="Anchor" layoutX="33.0" layoutY="258.0" prefHeight="303.0" prefWidth="563.0" style="-fx-border-color: #dcdcdc; -fx-border-radius: 3;" visible="false" />
+            <Label fx:id="alertLabel" layoutX="239.0" layoutY="226.0" textFill="#ff0101" />
          </children>
       </AnchorPane>
    </children>

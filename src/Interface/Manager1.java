@@ -12,6 +12,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -54,6 +55,24 @@ public class Manager1 {
     private ArrayList<Client> clients = new ArrayList<>();
     private ObservableList<Client> clientsList = FXCollections.observableArrayList();
 
+    TextFormatter<Integer> telNumberFormatter = new TextFormatter<>(new StringConverter<>() {
+        @Override
+        public String toString(Integer object) {
+            if (object == null) {
+                return "";
+            }
+            return object.toString();
+        }
+
+        @Override
+        public Integer fromString(String string) {
+            try {
+                return Integer.parseInt(string);
+            } catch (NumberFormatException e) {
+                return null;
+            }
+        }
+    });
 
     public void switchToVouchers(javafx.event.ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("manager2.fxml"));
@@ -65,18 +84,8 @@ public class Manager1 {
         stage.setScene(scene);
         stage.show();
 
-        /*Parent root = FXMLLoader.load(getClass().getResource("manager2.fxml"));
-        stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
-        scene = new Scene (root);
-        stage.setScene(scene);
-        stage.show();*/
     }
     public void switchToDataAnalys(javafx.event.ActionEvent actionEvent) throws IOException {
-        /*Parent root = FXMLLoader.load(getClass().getResource("manager3.fxml"));
-        stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
-        scene = new Scene (root);
-        stage.setScene(scene);
-        stage.show();*/
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("manager3.fxml"));
         Parent root = loader.load();
@@ -90,11 +99,6 @@ public class Manager1 {
         stage.show();
     }
     public void switchToData(javafx.event.ActionEvent actionEvent) throws IOException {
-        /*Parent root = FXMLLoader.load(getClass().getResource("manager4.fxml"));
-        stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
-        scene = new Scene (root);
-        stage.setScene(scene);
-        stage.show();*/
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("manager4.fxml"));
         Parent root = loader.load();
@@ -132,62 +136,120 @@ public class Manager1 {
     }
 
     public void createClient(ActionEvent actionEvent) throws IOException {
-        // Считывание данных из текстовых полей
-        // Считывание данных из текстовых полей
+        numberTextField.setTextFormatter(telNumberFormatter);
         String username = usernameTextField.getText();
         String password = passwordTextField.getText();
         String name = nameTextField.getText();
-        String telNumber = numberTextField.getText();
+        String telNumberText = numberTextField.getText();
         String address = addressTextField.getText();
 
-        // Check for duplicates in existing clients
-        if (checkForDuplicates(username, telNumber)) {
-            // Display an alert if a duplicate is found
-            alertLabel.setText("Такий акаунт або номер телефону вже існує");
-            return; // Cancel the creation process
+        if (username.isEmpty() || password.isEmpty() || name.isEmpty() || telNumberText.isEmpty() || address.isEmpty()) {
+            alertLabel.setText("Заповніть всі поля для створення профілю");
+            return;
+        }
+        alertLabel.setText("");
+
+        Integer telNumber = parseTelNumber(telNumberText);
+
+        if (telNumber == null) {
+            alertLabel.setText("Номер телефону повинен бути числом");
+            return;
         }
 
-        // Создание объекта Client и установка значений атрибутов
-        Client client = new Client(username, password, name, telNumber, address, "Touristique");
+        int duplicateScenario = checkForDuplicates(username, telNumber.toString());
 
-        // Добавление клиента в коллекцию
-        clients.add(client);
+        switch (duplicateScenario) {
+            case 1:
+                alertLabel.setText("Акаунт з таким логіном і номером телефону вже існує");
+                return;
+            case 2:
+                alertLabel.setText("Акаунт з таким логіном вже існує");
+                return;
+            case 3:
+                alertLabel.setText("Акаунт з таким номером телефону вже існує");
+                return;
+            default:
+                Client client = new Client(username, password, name, telNumber.toString(), address, "Touristique");
 
-        // Добавление коллекции в файл с данными
-        saveDataToFile("C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clients.txt", clients);
+                clients.add(client);
 
-        // Clear the alertLabel if the creation process is successful
-        alertLabel.setText("");
-        /*String username = usernameTextField.getText();
-        String password = passwordTextField.getText();
-        String name = nameTextField.getText();
-        String telNumber = numberTextField.getText();
-        String address = addressTextField.getText();
+                saveDataToFile("C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clients.txt", clients);
 
-        // Создание объекта Client и установка значений атрибутов
-        Client client = new Client(username, password, name, telNumber, address);
+                alertLabel.setText("");
+                break;
+        }
 
-        // Добавление клиента в коллекцию
-        clients.add(client);
-        clientsList.add(client);
-
-        // Добавление коллекции в файл с данными
-        saveDataToFile("C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clients.txt", clients);*/
+    }
+    private Integer parseTelNumber(String telNumberText) {
+        try {
+            return Integer.parseInt(telNumberText);
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
-    private boolean checkForDuplicates(String username, String telNumber) {
+    private  int checkForDuplicates(String username, String telNumber) {
+        boolean usernameExists = false;
+        boolean telNumberExists = false;
+
+        List<Client> clients = loadDataFromFile("C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clients.txt");
+
         for (Client client : clients) {
-            if (client.getUsername().equals(username) || client.getTelNumber().equals(telNumber)) {
-                return true; // Duplicate found
+            if (client.getUsername().equals(username)) {
+                usernameExists = true;
+            }
+
+            if (client.getTelNumber().equals(telNumber)) {
+                telNumberExists = true;
+            }
+
+            // Если оба условия выполняются, значит, оба дубликата существуют
+            if (usernameExists && telNumberExists) {
+                return 1;
+            }
+
+            // Если только логин существует
+            if (usernameExists) {
+                return 2;
+            }
+
+            // Если только номер телефона существует
+            if (telNumberExists) {
+                return 3;
             }
         }
-        return false; // No duplicates found
-    }
 
+        // Нет дубликатов
+        return 0;
+    }
+    private List<Client> loadDataFromFile(String filePath) {
+        List<Client> clients = new ArrayList<>();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] data = line.split(",");
+                if (data.length == 6) {
+                    String username = data[0].trim();
+                    String password = data[1].trim();
+                    String name = data[2].trim();
+                    String telNumber = data[3].trim();
+                    String address = data[4].trim();
+                    String agencyName = data[5].trim();
+
+                    clients.add(new Client(username, password, name, telNumber, address, agencyName));
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace(); // Обработка ошибок загрузки данных из файла
+        }
+
+        return clients;
+    }
     private void saveDataToFile(String filename, ArrayList<Client> clients) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename, true))) {
             for (Client client : clients) {
-                // Форматирование строки перед записью в файл
+
                 String line = String.format("%s,%s,%s,%s,%s,%s",
                         client.getUsername(), client.getPassword(), client.getName(),
                         client.getTelNumber(), client.getAddress(), client.getAgencyName());
@@ -196,12 +258,12 @@ public class Manager1 {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            // Обработка ошибок записи в файл
+
         }
     }
 
     public void scanClientDataFile() throws IOException{
-        // Пропишите путь к файлу с данными
+
         String filePath = "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clients.txt";
 
         List<String> clientUserNames = readClientName(new File(filePath));
@@ -217,6 +279,7 @@ public class Manager1 {
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         telNumberColumn.setCellValueFactory(new PropertyValueFactory<>("telNumber"));
         addressColumn.setCellValueFactory(new PropertyValueFactory<>("address"));
+
     }
 
     private List<String> readClientName(File file) {
@@ -225,10 +288,8 @@ public class Manager1 {
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = br.readLine()) != null) {
-                // Разделяем строку на части, используя запятую как разделитель
                 String[] parts = line.split(",");
 
-                // Предполагаем, что у нас есть все необходимые части данных
                 String username = parts[0];
                 String password = parts[1];
                 String name = parts[2];
@@ -236,12 +297,10 @@ public class Manager1 {
                 String address = parts[4];
                 String agencyName = parts[5];
 
-                // Вы можете использовать только 'name' или любую другую часть данных, в зависимости от вашего выбора
                 clientData.add(username);
             }
         } catch (IOException e) {
             e.printStackTrace();
-            // Обработайте исключение, если что-то пошло не так при чтении файла
         }
 
         return clientData;
@@ -252,10 +311,8 @@ public class Manager1 {
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = br.readLine()) != null) {
-                // Разделяем строку на части, используя запятую как разделитель
                 String[] parts = line.split(",");
 
-                // Предполагаем, что у нас есть все необходимые части данных
                 String username = parts[0];
                 String password = parts[1];
                 String name = parts[2];
@@ -263,46 +320,37 @@ public class Manager1 {
                 String address = parts[4];
                 String agencyName = parts[5];
 
-                // Вы можете использовать только 'name' или любую другую часть данных, в зависимости от вашего выбора
                 Client client = new Client(username, password, name, telNumber, address, agencyName);
                 clientData.add(client);
             }
         } catch (IOException e) {
             e.printStackTrace();
-            // Обработайте исключение, если что-то пошло не так при чтении файла
         }
 
         return clientData;
     }
 
     public void deleteClient(ActionEvent actionEvent) throws IOException {
-        //Get the selected client name from the choice box
         String selectedUserName = clientDeleteChoiceBox.getValue();
 
-        // Create a temporary list to store the clients excluding the one to be deleted
         List<Client> updatedClients = new ArrayList<>();
 
-        // Read the existing clients from the file
         List<Client> existingClients = readClientData(new File("C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clients.txt"));
 
-        // Iterate through the existing clients and add to the updated list except for the one to be deleted
         for (Client client : existingClients) {
             if (!client.getUsername().equals(selectedUserName)) {
                 updatedClients.add(client);
             }
         }
 
-        // Update the file with the modified list of clients
         updateDataFile("C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clients.txt", updatedClients);
 
-        // Refresh the TableView
         scanClientDataFile();
 
     }
     private void updateDataFile(String filename, List<Client> clients) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
             for (Client client : clients) {
-                // Format the line before writing to the file
                 String line = String.format("%s,%s,%s,%s,%s,%s",
                         client.getUsername(), client.getPassword(), client.getName(),
                         client.getTelNumber(), client.getAddress(), client.getAgencyName());
@@ -311,7 +359,6 @@ public class Manager1 {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            // Handle any exceptions that occur during the file update
         }
     }
 

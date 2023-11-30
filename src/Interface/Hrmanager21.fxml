@@ -7,7 +7,6 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane prefHeight="500.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Interface.Hrmanager21">
    <children>
       <Label layoutX="218.0" layoutY="14.0" text="Редактувати путівку">
@@ -15,10 +14,10 @@
             <Font size="18.0" />
          </font>
       </Label>
-      <TextField layoutX="226.0" layoutY="91.0" />
-      <TextField layoutX="226.0" layoutY="150.0" />
-      <TextField layoutX="228.0" layoutY="211.0" />
-      <TextField layoutX="226.0" layoutY="385.0" />
+      <TextField fx:id="countryTextField" layoutX="226.0" layoutY="91.0" />
+      <TextField fx:id="cityTextField" layoutX="226.0" layoutY="150.0" />
+      <TextField fx:id="hotelTextField" layoutX="228.0" layoutY="211.0" />
+      <TextField fx:id="urlTextField" layoutX="226.0" layoutY="385.0" />
       <Label fx:id="countryLabel" layoutX="278.0" layoutY="70.0" text="Країна">
          <font>
             <Font size="15.0" />
@@ -34,14 +33,14 @@
             <Font size="15.0" />
          </font>
       </Label>
-      <DatePicker layoutX="228.0" layoutY="271.0" prefHeight="25.0" prefWidth="149.0" />
-      <Label fx:id="beginDatePicker" layoutX="255.0" layoutY="250.0" text="Дата початку">
+      <DatePicker fx:id="beginDatePicker" layoutX="228.0" layoutY="271.0" prefHeight="25.0" prefWidth="149.0" />
+      <Label fx:id="beginDateLabel" layoutX="255.0" layoutY="250.0" text="Дата початку">
          <font>
             <Font size="15.0" />
          </font>
       </Label>
-      <DatePicker layoutX="228.0" layoutY="324.0" prefHeight="25.0" prefWidth="149.0" />
-      <Label fx:id="endDatePicker" layoutX="247.0" layoutY="303.0" text="Дата закінчення">
+      <DatePicker fx:id="endDatePicker" layoutX="228.0" layoutY="324.0" prefHeight="25.0" prefWidth="149.0" />
+      <Label fx:id="endDateLabel" layoutX="247.0" layoutY="303.0" text="Дата закінчення">
          <font>
             <Font size="15.0" />
          </font>
@@ -51,7 +50,7 @@
             <Font size="15.0" />
          </font>
       </Label>
-      <Button layoutX="254.0" layoutY="444.0" mnemonicParsing="false" text="Підтвердити">
+      <Button layoutX="254.0" layoutY="444.0" mnemonicParsing="false" onAction="#updateVoucherData" text="Підтвердити">
          <font>
             <Font size="13.0" />
          </font>

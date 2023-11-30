@@ -9,12 +9,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 
 import java.io.*;
 import java.time.LocalDate;
@@ -28,6 +26,8 @@ public class Manager2 {
     private Parent root;
     @FXML
     private TextField priceTextField;
+    @FXML
+    Label alertLabel;
     @FXML
     private ChoiceBox<String> voucherIDSelectChoiceBox;
     @FXML
@@ -54,7 +54,26 @@ public class Manager2 {
     private TableColumn<Voucher, String> priceColumn;
     private ObservableList<Voucher> voucherList = FXCollections.observableArrayList();
 
+    TextFormatter<Double> priceFormatter = new TextFormatter<>(new StringConverter<>() {
+        @Override
+        public String toString(Double object) {
+            if (object == null) {
+                return "";
+            }
+            return object.toString();
+        }
 
+        @Override
+        public Double fromString(String string) {
+            try {
+                // Пытаемся преобразовать введенную строку в число с плавающей точкой
+                return Double.parseDouble(string);
+            } catch (NumberFormatException e) {
+                // Если не удалось преобразовать, возвращаем null
+                return null;
+            }
+        }
+    });
     public void switchToClients(javafx.event.ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("manager1.fxml"));
         Parent root = loader.load();
@@ -100,7 +119,6 @@ public class Manager2 {
         stage.show();
     }
     public void scanClientDataFile() throws IOException{
-        // Пропишите путь к файлу с данными
         String filePath = "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clientVouchers.txt";
 
         List<String> voucherIDs = readvoucherID(new File(filePath));
@@ -131,10 +149,8 @@ public class Manager2 {
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = br.readLine()) != null) {
-                // Разделяем строку на части, используя запятую как разделитель
                 String[] parts = line.split(",");
 
-                // Предполагаем, что у нас есть все необходимые части данных
                 String username = parts[0];
                 String country = parts[1];
                 String city = parts[2];
@@ -145,12 +161,10 @@ public class Manager2 {
                 String price = parts[7];
                 String id = parts[8];
 
-                // Вы можете использовать только 'name' или любую другую часть данных, в зависимости от вашего выбора
                 voucherData.add(id);
             }
         } catch (IOException e) {
             e.printStackTrace();
-            // Обработайте исключение, если что-то пошло не так при чтении файла
         }
 
         return voucherData;
@@ -161,10 +175,8 @@ public class Manager2 {
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = br.readLine()) != null) {
-                // Разделяем строку на части, используя запятую как разделитель
                 String[] parts = line.split(",");
 
-                // Предполагаем, что у нас есть все необходимые части данных
                 String username = parts[0];
                 String country = parts[1];
                 String city = parts[2];
@@ -175,25 +187,32 @@ public class Manager2 {
                 String price = parts[7];
                 String id = parts[8];
 
-                // Вы можете использовать только 'name' или любую другую часть данных, в зависимости от вашего выбора
                 Voucher voucher = new Voucher(username, country, city, hotel, begin_date, end_date , state, price, id);
                 voucherData.add(voucher);
             }
         } catch (IOException e) {
             e.printStackTrace();
-            // Обработайте исключение, если что-то пошло не так при чтении файла
         }
 
         return voucherData;
     }
 
     public void processVoucher() throws IOException {
-        // Get selected values
+        priceTextField.setTextFormatter(priceFormatter);
+
         String selectedID = voucherIDSelectChoiceBox.getValue();
         String selectedStatus = voucherStatusSelectChoiceBox.getValue();
-        String newPrice = priceTextField.getText(); // Assuming you have a TextField named priceTextField
+        String newPriceText = priceTextField.getText();
 
-        // Find the corresponding Voucher object
+        // Пытаемся получить числовое значение из текста в поле цены
+        Double newPrice = parsePrice(newPriceText);
+
+        // Проверка на ввод числового значения
+        if (newPrice == null) {
+            alertLabel.setText("Невірний формат ціни");
+            return;
+        }
+
         Voucher selectedVoucher = null;
         for (Voucher voucher : voucherList) {
             if (voucher.getId().equals(selectedID)) {
@@ -202,24 +221,26 @@ public class Manager2 {
             }
         }
 
-        // Update the status and price if the Voucher is found
         if (selectedVoucher != null) {
             selectedVoucher.setState(selectedStatus);
-            selectedVoucher.setPrice(newPrice);
+            selectedVoucher.setPrice(newPrice.toString());
 
-            // Update the file with the modified voucher list
             updateVoucherFile();
             scanClientDataFile();
         } else {
-            // Handle the case where the voucher with the selected ID is not found
             System.out.println("Voucher with ID " + selectedID + " not found.");
         }
     }
+    private Double parsePrice(String priceText) {
+        try {
+            return Double.parseDouble(priceText);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
     private void updateVoucherFile() throws IOException {
-        // Create a StringBuilder to store the updated voucher data
         StringBuilder updatedData = new StringBuilder();
 
-        // Append the updated voucher data to the StringBuilder
         for (Voucher voucher : voucherList) {
             String line = String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s%n",
                     voucher.getUsername(), voucher.getCountry(), voucher.getCity(),
@@ -228,15 +249,12 @@ public class Manager2 {
             updatedData.append(line);
         }
 
-        // Specify the file path
         String filePath = "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clientVouchers.txt";
 
-        // Write the updated data back to the file
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
             writer.write(updatedData.toString());
         } catch (IOException e) {
             e.printStackTrace();
-            // Handle the exception (e.g., log an error) based on your application's requirements
         }
     }
 }

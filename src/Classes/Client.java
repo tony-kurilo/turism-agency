@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Client {
-    private String username;
-    private String password;
-    private String name;
-    private String telNumber;
-    private String address;
-    private String agencyName;
+    protected String username;
+    protected String password;
+    protected String name;
+    protected String telNumber;
+    protected String address;
+    protected String agencyName;
 
     public Client() {}
 
@@ -65,16 +65,5 @@ public class Client {
     public String getAgencyName() {
         return agencyName;
     }
-    public boolean checkClientExists(String clientName) {
-        // Реализация метода checkClientExists
-        return false;
-    }
 
-    public void authorize() {
-        // Реализация метода authorize
-    }
-
-    public void showMyVouchers(String clientName) {
-        // Реализация метода showMyVouchers
-    }
 }

@@ -29,7 +29,7 @@ public class Voucher {
         this.endDate = endDate;
         this.state = state;
         this.price = price;
-        this.id = id; // Генерация уникального ID
+        this.id = id;
     }
 
     public Voucher(String username, String country, String city, String hotel, LocalDate beginDate, LocalDate endDate) {
@@ -41,7 +41,7 @@ public class Voucher {
         this.endDate = endDate;
         this.state = "В обробці";
         this.price = " ";
-        this.id = String.valueOf(generateUniqueId()); // Генерация уникального ID
+        this.id = String.valueOf(generateUniqueId());
     }
     public Voucher(String country, String city, String hotel, LocalDate beginDate, LocalDate endDate, String state, String price , String id) {
         this.country = country;
@@ -51,7 +51,7 @@ public class Voucher {
         this.endDate = endDate;
         this.state = state;
         this.price = price;
-        this.id = id; // Генерация уникального ID
+        this.id = id;
     }
     public Voucher(String country, String city, String hotel, LocalDate beginDate, LocalDate endDate) {
         this.country = country;
@@ -113,10 +113,8 @@ public class Voucher {
         return price;
     }
     private synchronized long generateUniqueId() {
-        // Сканируем файл clientVouchers.txt и находим максимальное значение id
-        long maxId = getMaxIdFromFile("C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clientVouchers.txt");
 
-        // Возвращаем новое уникальное значение, увеличивая максимальное значение на 1
+        long maxId = getMaxIdFromFile("C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clientVouchers.txt");
         return ++maxId;
     }
     private long getMaxIdFromFile(String filePath) {
@@ -126,14 +124,13 @@ public class Voucher {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(",");
-                if (parts.length > 8) { // Убедитесь, что у строки есть достаточное количество элементов
+                if (parts.length > 8) {
                     long currentId = Long.parseLong(parts[8]);
                     maxId = Math.max(maxId, currentId);
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
-            // Обработайте исключение, если что-то пошло не так при чтении файла
         }
 
         return maxId;

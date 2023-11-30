@@ -7,16 +7,19 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 import java.io.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,15 +53,15 @@ public class Client3 {
     @FXML
     Label datesLabel;
     @FXML
+    Label alertLabel;
+    @FXML
     ImageView hotelImageView;
+    @FXML
+    Button searchButton;
+    @FXML
+    AnchorPane Anchor;
 
     public void switchToMyVouchers(javafx.event.ActionEvent actionEvent) throws IOException {
-        /*FXMLLoader loader = new FXMLLoader(getClass().getResource("client1.fxml"));
-        Parent root = loader.load();
-        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();*/
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("client1.fxml"));
         Parent root = loader.load();
@@ -100,27 +103,46 @@ public class Client3 {
         String country = countryTextField.getText();
         String city = cityTextField.getText();
         String hotel = hotelTextField.getText();
-        LocalDate beginDate = beginDatePicker.getValue();
-        LocalDate endDate = endDatePicker.getValue();
+        LocalDate beginDate = null;
+        LocalDate endDate = null;
 
-        // Проводим поиск в файле с данными
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+
+            if (beginDatePicker.getEditor().getText() != null && !beginDatePicker.getEditor().getText().isEmpty()) {
+                beginDate = LocalDate.parse(beginDatePicker.getEditor().getText(), formatter);
+            }
+
+            if (endDatePicker.getEditor().getText() != null && !endDatePicker.getEditor().getText().isEmpty()) {
+                endDate = LocalDate.parse(endDatePicker.getEditor().getText(), formatter);
+            }
+        } catch (DateTimeParseException e) {
+            // Выводим сообщение об ошибке в случае неверного формата
+            alertLabel.setText("Неправильно введена дата");
+            return;
+        }
+
+
         boolean found = searchVoucherInFile(country, city, hotel, beginDate, endDate);
 
-        // Выводим результат в соответствующие метки и изображение
+
         if (found) {
+            alertLabel.setText("");
             foundVoucher = new Voucher(UserData.getUsername(), country, city, hotel, beginDate, endDate);
             yesLabel.setText("Так, у наявності є така путівка");
-            noLabel.setText(""); // Clear the noLabel
+            noLabel.setText("");
             displayVoucherDetails(country, city, hotel, beginDate, endDate);
+            searchButton.setVisible(true);
+            Anchor.setVisible(true);
+
         } else {
             foundVoucher = null;
-            yesLabel.setText(""); // Clear the yesLabel
+            yesLabel.setText("");
             noLabel.setText("На жаль, такої путівки немає у наявності");
-            clearVoucherDetails(); // Clear details if no voucher is found
+            clearVoucherDetails();
         }
     }
     private boolean searchVoucherInFile(String country, String city, String hotel, LocalDate beginDate, LocalDate endDate) {
-        // Пропишите путь к файлу с данными
         String filePath = "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\vouchers.txt";
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -128,10 +150,10 @@ public class Client3 {
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = br.readLine()) != null) {
-                // Разделяем строку на части, используя запятую как разделитель
+
                 String[] parts = line.split(",");
 
-                // Предполагаем, что у нас есть все необходимые части данных
+
                 String countryFromFile = parts[0];
                 String cityFromFile = parts[1];
                 String hotelFromFile = parts[2];
@@ -139,78 +161,65 @@ public class Client3 {
                 LocalDate endDateFromFile = LocalDate.parse(parts[4], formatter);
 
 
-                // Проверяем совпадение
+
                 if (country.equals(countryFromFile) && city.equals(cityFromFile) && hotel.equals(hotelFromFile) &&
                         (beginDate.isEqual(beginDateFromFile) || beginDate.isAfter(beginDateFromFile)) &&
                         (endDate.isEqual(endDateFromFile) || endDate.isBefore(endDateFromFile))) {
-                    return true; // Найдено совпадение
+                    return true;
                 }
-                /*if (country.equals(countryFromFile) && city.equals(cityFromFile) &&
-                        hotel.equals(hotelFromFile) && beginDate.equals(beginDateFromFile) && endDate.equals(endDateFromFile)) {
-                    return true; // Найдено совпадение
-                }*/
+
             }
         } catch (IOException e) {
             e.printStackTrace();
-            // Обработайте исключение, если что-то пошло не так при чтении файла
+
         }
 
-        return false; // Совпадение не найдено
+        return false;
     }
 
     private void displayVoucherDetails(String country, String city, String hotel, LocalDate beginDate, LocalDate endDate) {
 
         String hotelImageURL = searchHotelInFile(hotel);
 
-        //String imagePath = "C:\\Users\\kuril\\IdeaProjects\\kursova\\images" + ImagePath1; // specify your image folder path
-        //String hotelImageURL = new File(imagePath).toURI().toString();
-        // Выводим значения в соответствующие метки и изображение
         countryCityLabel.setText(country + ", " + city);
         hotelLabel.setText(hotel);
         datesLabel.setText("З " + beginDate + " по " + endDate);
-        // Вставьте код для отображения изображения в hotelImageView
-        //hotelImageView.setImage(new Image(hotelImageURL));
+
         if (hotelImageURL != null) {
             hotelImageView.setImage(new Image(hotelImageURL));
         } else {
-            // Вставьте код для очистки изображения в hotelImageView
+
             hotelImageView.setImage(null);
         }
     }
 
     private void clearVoucherDetails() {
-        // Очищаем значения в метках и изображении
         countryCityLabel.setText("");
         hotelLabel.setText("");
         datesLabel.setText("");
-        // Вставьте код для очистки изображения в hotelImageView
-        //hotelImageView.setImage(null);
     }
     private String searchHotelInFile(String hotel) {
-        // Пропишите путь к файлу с данными
+
         String filePath = "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\hotels.txt";
 
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = br.readLine()) != null) {
-                // Разделяем строку на части, используя запятую как разделитель
                 String[] parts = line.split(",");
 
-                // Предполагаем, что у нас есть все необходимые части данных
                 String hotelFromFile = parts[0];
                 String imageLink = parts[1];
 
-                // Проверяем совпадение
                 if (hotel.equals(hotelFromFile)) {
-                    return imageLink; // Найдено совпадение
+                    return imageLink;
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
-            // Обработайте исключение, если что-то пошло не так при чтении файла
+
         }
 
-        return null; // Совпадение не найдено
+        return null;
     }
     public void createVoucherRequest(ActionEvent actionEvent) throws IOException{
         writeVoucherRequestInFile(foundVoucher);
@@ -218,16 +227,14 @@ public class Client3 {
 
 
     private void writeVoucherRequestInFile(Voucher voucher) {
-        // Пропишите путь к файлу с данными клиентских путевок
         String filePath = "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clientVouchers.txt";
 
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath, true))) {
-            // Записываем данные путевки в файл
             bw.write(voucher.toString());
-            bw.newLine(); // Переходим на новую строку для следующей записи
+            bw.newLine();
         } catch (IOException e) {
             e.printStackTrace();
-            // Обработайте исключение, если что-то пошло не так при записи в файл
+
         }
     }
     

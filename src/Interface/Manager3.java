@@ -55,11 +55,7 @@ public class Manager3 {
         scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
-        /*Parent root = FXMLLoader.load(getClass().getResource("manager1.fxml"));
-        stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
-        scene = new Scene (root);
-        stage.setScene(scene);
-        stage.show();*/
+
     }
 
     public void switchToVouchers(javafx.event.ActionEvent actionEvent) throws IOException {
@@ -73,11 +69,7 @@ public class Manager3 {
         scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
-        /*Parent root = FXMLLoader.load(getClass().getResource("manager2.fxml"));
-        stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
-        scene = new Scene (root);
-        stage.setScene(scene);
-        stage.show();*/
+
     }
 
     public void switchToData(javafx.event.ActionEvent actionEvent) throws IOException {
@@ -102,15 +94,12 @@ public class Manager3 {
     }
 
     public void searchCountries() {
-        // Assuming your data file has the 'country' attribute at a specific index (adjust the index accordingly)
         int countryIndex = 1;
 
-        // Provide the path to your data file
         String filePath = "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clientVouchers.txt";
 
         Set<String> uniqueCountries = readUniqueCountries(filePath, countryIndex);
 
-        // Update the ChoiceBox items with the unique countries
         selectCountryChoiceBox.getItems().setAll(uniqueCountries);
     }
 
@@ -129,7 +118,6 @@ public class Manager3 {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            // Handle the exception if something goes wrong while reading the file
         }
 
         return uniqueCountries;
@@ -187,28 +175,20 @@ public class Manager3 {
     }
 
     private void displayNamesInTableView(List<String> names) {
-        // Очистите существующие данные в таблице
         clientWhoChoseCountryTableView.getItems().clear();
 
-        // Создайте ObservableList для хранения данных имен
         ObservableList<String> namesList = FXCollections.observableArrayList(names);
 
-        // Очистите существующие колонки в таблице
         clientWhoChoseCountryTableView.getColumns().clear();
 
-        // Создайте новую колонку
-        //TableColumn<String, String> nameColumn = new TableColumn<>("ПІБ");
 
-        // Установите данные в колонку
         nameColumn.setCellValueFactory(cellData -> {
             String name = cellData.getValue();
             return new SimpleStringProperty(name);
         });
 
-        // Добавьте колонку в таблицу
         clientWhoChoseCountryTableView.getColumns().add(nameColumn);
 
-        // Установите данные в TableView
         clientWhoChoseCountryTableView.setItems(namesList);
     }
 
@@ -223,18 +203,15 @@ public class Manager3 {
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(",");
 
-                // Проверяем, что есть хотя бы две части (username и price)
                 if (parts.length >= 9) {
                     String priceString = parts[7].trim();
 
-                    // Проверяем, что строка не пуста и не состоит только из пробелов
                     if (!priceString.isEmpty()) {
                         try {
                             double price = Double.parseDouble(priceString);
                             totalCost += price;
                             voucherCount++;
                         } catch (NumberFormatException e) {
-                            // Если не удается преобразовать в double, игнорируем этот элемент
                         }
                     }
                 }
@@ -243,14 +220,13 @@ public class Manager3 {
             e.printStackTrace();
         }
 
-        // Предотвращаем деление на ноль
+
         if (voucherCount > 0) {
             averageCost = totalCost / voucherCount;
         } else {
-            averageCost = 0; // или можно выбрать другое значение по умолчанию
+            averageCost = 0;
         }
 
-        // Выводим среднее значение в Label
         averageCostLabel.setText(""+averageCost);
     }
 
@@ -270,17 +246,14 @@ public class Manager3 {
                     String endDateString = parts[5].trim();
 
                     try {
-                        // Преобразование строк в LocalDate
                         LocalDate beginDate = LocalDate.parse(beginDateString, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
                         LocalDate endDate = LocalDate.parse(endDateString, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
-                        // Вычисление разницы в днях
                         int duration = (int) beginDate.until(endDate).getDays();
 
                         totalDuration += duration;
                         tripCount++;
                     } catch (Exception e) {
-                        // Обработка ошибок парсинга даты
                         e.printStackTrace();
                     }
                 }
@@ -289,47 +262,35 @@ public class Manager3 {
             e.printStackTrace();
         }
 
-        // Предотвращаем деление на ноль
         if (tripCount > 0) {
             int averageDuration = totalDuration / tripCount;
 
-            // Вывод средней продолжительности в Label
             averageDurationLabel.setText(averageDuration + " діб");
         } else {
-            // Вывод сообщения об отсутствии данных
             averageDurationLabel.setText("Немає даних");
         }
     }
     public void countryWithHighestDemand(ActionEvent actionEvent){
-        // Пропишите путь к файлу с данными
         String filePath = "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\vouchers.txt";
 
-        // Создаем карту для хранения количества вхождений стран
         Map<String, Integer> countryCountMap = new HashMap<>();
 
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = br.readLine()) != null) {
-                // Разделяем строку на части, используя запятую как разделитель
                 String[] parts = line.split(",");
 
-                // Предполагаем, что у нас есть все необходимые части данных
                 String country = parts[0].trim();
 
-                // Увеличиваем счетчик для данной страны
                 countryCountMap.put(country, countryCountMap.getOrDefault(country, 0) + 1);
             }
         } catch (IOException e) {
             e.printStackTrace();
-            // Обработайте исключение, если что-то пошло не так при чтении файла
         }
 
-        // Находим страну с максимальным количеством вхождений
         String mostPopularCountry = findMostPopularCountry(countryCountMap);
 
-        // Выводим результат в label
         if (mostPopularCountry != null) {
-            // Ваш label, например:
             countryWithHighestDemandLabel.setText(mostPopularCountry);
         } else {
             countryWithHighestDemandLabel.setText("Нема даних");
@@ -337,7 +298,6 @@ public class Manager3 {
     }
 
     private String findMostPopularCountry(Map<String, Integer> countryCountMap) {
-        // Ищем страну с максимальным количеством вхождений
         int maxCount = 0;
         String mostPopularCountry = null;
 

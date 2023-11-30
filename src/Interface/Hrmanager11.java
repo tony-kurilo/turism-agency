@@ -27,14 +27,11 @@ public class Hrmanager11 {
     private TextField telNumberTextField;
 
     public void displayUserData() {
-        // Получение username из UserSession
         String storedUserName = UserData.getUsername();
 
         if (storedUserName != null) {
-            // Путь к файлу с данными пользователя
             String filePath = "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\managers.txt";
 
-            // Поиск данных пользователя в файле
             try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
@@ -45,7 +42,6 @@ public class Hrmanager11 {
                         String name = parts[2];
                         String telNumber = parts[3];
                         String agencyName = parts[4];
-                        // Если найдено совпадение, отображаем имя в Label
                         if (storedUserName.equals(username)) {
                             loginLabel.setText(username);
                             passwordLabel.setText(password);
@@ -55,14 +51,11 @@ public class Hrmanager11 {
                         }
                     }
                 }
-                // Если не найдено совпадение
                 nameLabel.setText("Имя не найдено");
             } catch (IOException e) {
                 e.printStackTrace();
-                // Обработка ошибок чтения файла
             }
         } else {
-            // Если storedUserName == null
             nameLabel.setText("Имя не найдено");
         }
     }
@@ -75,12 +68,10 @@ public class Hrmanager11 {
         String userName = UserData.getUsername();
 
         if (username.isEmpty() && password.isEmpty() && name.isEmpty() && telNumber.isEmpty()) {
-            // Если все поля пусты, нет необходимости в изменениях
             System.out.println("Нет данных для изменения.");
             return;
         }
 
-        // Чтение данных из файла и поиск клиента по атрибуту ClientName
         List<String> lines = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
@@ -98,17 +89,14 @@ public class Hrmanager11 {
                     String oldTelNumber = tokens[3].trim();
                     String oldAgencyName = tokens[4].trim();
 
-                    // Найден нужный клиент, обновляем данные
                     if (!username.isEmpty()) tokens[0] = username.trim();
                     if (!password.isEmpty()) tokens[1] = password.trim();
                     if (!name.isEmpty()) tokens[2] = name.trim();
                     if (!telNumber.isEmpty()) tokens[3] = telNumber.trim();
 
 
-                    // Обновляем строку в списке
                     lines.set(lines.size() - 1, String.join(",", tokens));
 
-                    // Обновляем Label, используя старые значения при необходимости
                     loginTextField.setText(!username.isEmpty() ? username : oldUsername);
                     passwordLabel.setText(!password.isEmpty() ? password : oldPassword);
                     nameLabel.setText(!name.isEmpty() ? name : oldName);
@@ -120,7 +108,6 @@ public class Hrmanager11 {
             e.printStackTrace();
         }
 
-        // Перезаписываем файл с обновленными данными
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
             for (String line : lines) {
                 writer.write(line);
