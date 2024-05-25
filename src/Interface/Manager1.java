@@ -1,6 +1,7 @@
 package Interface;
 
 import Classes.Client;
+import Classes.Manager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -22,9 +23,10 @@ public class Manager1 {
     private Stage stage;
     private Scene scene;
     private Parent root;
-
     @FXML
     private Label alertLabel;
+    @FXML
+    private Label countLabel;
     @FXML
     private TableColumn<Client, String> usernameColumn;
     @FXML
@@ -192,7 +194,8 @@ public class Manager1 {
         boolean usernameExists = false;
         boolean telNumberExists = false;
 
-        List<Client> clients = loadDataFromFile("C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clients.txt");
+        List<Client> clients = loadDataFromClientFile("C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clients.txt");
+        List<Manager> managers = loadDataFromManagerFile("C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\managers.txt");
 
         for (Client client : clients) {
             if (client.getUsername().equals(username)) {
@@ -219,10 +222,36 @@ public class Manager1 {
             }
         }
 
+        // Проверка на дубликаты в менеджерах
+        for (Manager manager : managers) {
+            if (manager.getLogin().equals(username)) {
+                usernameExists = true;
+            }
+
+            if (manager.getTelNumber().equals(telNumber)) {
+                telNumberExists = true;
+            }
+
+            // Если оба условия выполняются, значит, оба дубликата существуют
+            if (usernameExists && telNumberExists) {
+                return 1;
+            }
+
+            // Если только логин существует
+            if (usernameExists) {
+                return 2;
+            }
+
+            // Если только номер телефона существует
+            if (telNumberExists) {
+                return 3;
+            }
+        }
+
         // Нет дубликатов
         return 0;
     }
-    private List<Client> loadDataFromFile(String filePath) {
+    private List<Client> loadDataFromClientFile(String filePath) {
         List<Client> clients = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
@@ -245,6 +274,29 @@ public class Manager1 {
         }
 
         return clients;
+    }
+    private List<Manager> loadDataFromManagerFile(String filePath) {
+        List<Manager> managers = new ArrayList<>();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] data = line.split(",");
+                if (data.length == 5) {
+                    String username = data[0].trim();
+                    String password = data[1].trim();
+                    String name = data[2].trim();
+                    String telNumber = data[3].trim();
+                    String agencyName = data[4].trim();
+
+                    managers.add(new Manager(username, password, name, telNumber,agencyName));
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace(); // Обработка ошибок загрузки данных из файла
+        }
+
+        return managers;
     }
     private void saveDataToFile(String filename, ArrayList<Client> clients) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename, true))) {
@@ -270,7 +322,7 @@ public class Manager1 {
         clientEditChoiceBox.getItems().setAll(clientUserNames);
         clientDeleteChoiceBox.getItems().setAll(clientUserNames);
 
-
+        countClients();
         clientsTableView.setItems(clientsList);
         List<Client> clientData = readClientData(new File(filePath));
         clientsList.clear();
@@ -361,5 +413,10 @@ public class Manager1 {
             e.printStackTrace();
         }
     }
-
+    public void countClients() {
+        String filePath = "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clients.txt";
+        List<Client> clients = loadDataFromClientFile(filePath);
+        int clientCount = clients.size();
+        countLabel.setText("Кількість - " + clientCount);
+    }
 }
