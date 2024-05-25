@@ -133,6 +133,7 @@ public class Client3 {
             noLabel.setText("");
             displayVoucherDetails(country, city, hotel, beginDate, endDate);
             searchButton.setVisible(true);
+            searchButton.setDisable(false);
             Anchor.setVisible(true);
 
         } else {

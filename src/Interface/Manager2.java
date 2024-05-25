@@ -93,9 +93,14 @@ public class Manager2 {
         stage.show();*/
     }
     public void switchToDataAnalys(javafx.event.ActionEvent actionEvent) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("manager3.fxml"));
-        stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
-        scene = new Scene (root);
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("manager3.fxml"));
+        Parent root = loader.load();
+
+        Manager3 manager3controller = loader.getController();
+        manager3controller.searchCountries();
+
+        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
     }
