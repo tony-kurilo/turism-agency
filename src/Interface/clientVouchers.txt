@@ -1,5 +1,1 @@
-tony,France,Paris,hotelF1,2023-12-13,2023-12-16,В обробці, ,1
-tony,France,Paris,hotelF1,2023-12-18,2023-12-23,В обробці, ,2
-tony,Germany,Hamburg,Hamburg Capital,2023-12-04,2023-12-23,До сплати,2500.0,3
-portalHater,France,Paris,hotelF1,2023-12-14,2023-12-16,До сплати,3000.0,4
-zirael,France,Paris,hotelF1,2023-12-18,2023-12-23,До сплати,4000.0,6
+tony,France,Paris,hotelF1,2023-11-22,2023-11-28,Відмова,2400,1

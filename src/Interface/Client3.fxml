@@ -84,14 +84,11 @@
                   <Font size="15.0" />
                </font>
             </Label>
+            <Button fx:id="searchButton" layoutX="240.0" layoutY="500.0" mnemonicParsing="false" onAction="#createVoucherRequest" prefHeight="37.0" prefWidth="121.0" text="Створити запит" visible="false" />
             <ImageView fx:id="hotelImageView" fitHeight="150.0" fitWidth="200.0" layoutX="46.0" layoutY="323.0" pickOnBounds="true" preserveRatio="true" />
-            <AnchorPane fx:id="Anchor" layoutX="33.0" layoutY="258.0" prefHeight="303.0" prefWidth="563.0" style="-fx-border-color: #dcdcdc; -fx-border-radius: 3;" visible="false">
-               <children>
-                  <Button fx:id="searchButton" layoutX="225.0" layoutY="250.0" mnemonicParsing="false" onAction="#createVoucherRequest" prefHeight="37.0" prefWidth="121.0" text="Створити запит" visible="false" />
-               </children></AnchorPane>
+            <AnchorPane fx:id="Anchor" layoutX="33.0" layoutY="258.0" prefHeight="303.0" prefWidth="563.0" style="-fx-border-color: #dcdcdc; -fx-border-radius: 3;" visible="false" />
             <Label fx:id="alertLabel" layoutX="239.0" layoutY="226.0" textFill="#ff0101" />
          </children>
       </AnchorPane>
-      <Accordion />
    </children>
 </AnchorPane>

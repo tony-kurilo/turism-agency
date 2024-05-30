@@ -271,7 +271,7 @@ public class Manager3 {
         }
     }
     public void countryWithHighestDemand(ActionEvent actionEvent){
-        String filePath = "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clientVouchers.txt";
+        String filePath = "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\vouchers.txt";
 
         Map<String, Integer> countryCountMap = new HashMap<>();
 
@@ -280,7 +280,7 @@ public class Manager3 {
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(",");
 
-                String country = parts[1].trim();
+                String country = parts[0].trim();
 
                 countryCountMap.put(country, countryCountMap.getOrDefault(country, 0) + 1);
             }
