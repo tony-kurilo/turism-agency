@@ -42,21 +42,16 @@ public class Login {
         }
         boolean clientMatch = checkCredentials("C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clients.txt", username, password);
         boolean managerMatch = checkCredentials("C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\managers.txt", username, password);
-        boolean hrManagerMatch = checkCredentials("C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\hrmanagers.txt", username, password);
 
 
-        if (clientMatch && !managerMatch && !hrManagerMatch) {
+        if (clientMatch && !managerMatch ) {
             UserData.setUsername(username);
             UserData.setPassword(password);
             switchToClient(actionEvent);
-        } else if (managerMatch && !clientMatch && !hrManagerMatch) {
+        } else if (managerMatch && !clientMatch ) {
             UserData.setUsername(username);
             UserData.setPassword(password);
             switchToManager(actionEvent);
-        } else if (hrManagerMatch && !clientMatch && !managerMatch) {
-            UserData.setUsername(username);
-            UserData.setPassword(password);
-            switchToHRManager(actionEvent);
         } else {
             errorLabel.setText("Неверный логин или пароль.");
         }
@@ -97,17 +92,6 @@ public class Login {
         Manager1 manager1Controller = loader.getController();
         manager1Controller.scanClientDataFile();
 
-        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
-
-    }
-    public void switchToHRManager(javafx.event.ActionEvent actionEvent) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("hrmanager1.fxml"));
-        Parent root = loader.load();
-        Hrmanager1 hrmanager1Controller = loader.getController();
-        hrmanager1Controller.scanManagerFile();
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
