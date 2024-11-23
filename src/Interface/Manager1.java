@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
 import java.io.*;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,6 +57,20 @@ public class Manager1 {
     private TableView<Client> clientsTableView;
     private ArrayList<Client> clients = new ArrayList<>();
     private ObservableList<Client> clientsList = FXCollections.observableArrayList();
+
+    // Метод для подключения к базе данных
+    private Connection connectToDatabase() {
+        String url = "jdbc:postgresql://localhost:5432/Touristique%20DB%20(Java)";
+        String user = "postgres";
+        String password = "3113";
+
+        try {
+            return DriverManager.getConnection(url, user, password);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     TextFormatter<Integer> telNumberFormatter = new TextFormatter<>(new StringConverter<>() {
         @Override
@@ -114,19 +129,55 @@ public class Manager1 {
         stage.show();
     }
     public void switchToEditClientScene(javafx.event.ActionEvent actionEvent) throws IOException {
-
         FXMLLoader loader = new FXMLLoader(getClass().getResource("manager11.fxml"));
         Parent root = loader.load();
 
-        Manager11  manager11Controller = loader.getController();
-        String selectedUserName = clientEditChoiceBox.getValue();
-        UserData.setUsername(selectedUserName);
-        manager11Controller.displayUserData();
+        Manager11 manager11Controller = loader.getController();
 
-        Stage newStage = new Stage();
-        newStage.setTitle("Редагування даних Клієнта");
-        newStage.setScene(new Scene(root));
-        newStage.show();
+        // Получение выбранного имени пользователя
+        String selectedUserName = clientEditChoiceBox.getValue();
+
+        // Устанавливаем username
+        UserData.setUsername(selectedUserName);
+
+        // Получение id пользователя из базы данных
+        int userId = fetchUserIdByUsername(selectedUserName);
+
+        if (userId != -1) {
+            // Устанавливаем id пользователя
+            UserData.setId(userId);
+
+            // Отображение данных пользователя
+            manager11Controller.displayUserData();
+
+            // Открываем новое окно
+            Stage newStage = new Stage();
+            newStage.setTitle("Редагування даних Клієнта");
+            newStage.setScene(new Scene(root));
+            newStage.show();
+        } else {
+            System.out.println("Ошибка: пользователь не найден в базе данных.");
+        }
+    }
+
+    private int fetchUserIdByUsername(String username) {
+        String query = "SELECT id FROM users WHERE username = ?";
+        try (Connection connection = connectToDatabase();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setString(1, username);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                return resultSet.getInt("id");
+            } else {
+                System.out.println("Пользователь с username " + username + " не найден.");
+                return -1;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return -1;
+        }
     }
 
     public void switchToLogin(javafx.event.ActionEvent actionEvent) throws IOException {
@@ -137,286 +188,256 @@ public class Manager1 {
         stage.show();
     }
 
-    public void createClient(ActionEvent actionEvent) throws IOException {
-        numberTextField.setTextFormatter(telNumberFormatter);
+    // Создание нового клиента
+    public void createClient(ActionEvent actionEvent) {
+        Connection connection = connectToDatabase();
+        if (connection == null) {
+            alertLabel.setText("Ошибка подключения к базе данных");
+            return;
+        }
+
         String username = usernameTextField.getText();
         String password = passwordTextField.getText();
         String name = nameTextField.getText();
-        String telNumberText = numberTextField.getText();
+        String telNumber = numberTextField.getText();
         String address = addressTextField.getText();
 
-        if (username.isEmpty() || password.isEmpty() || name.isEmpty() || telNumberText.isEmpty() || address.isEmpty()) {
-            alertLabel.setText("Заповніть всі поля для створення профілю");
-            return;
-        }
-        alertLabel.setText("");
-
-        Integer telNumber = parseTelNumber(telNumberText);
-
-        if (telNumber == null) {
-            alertLabel.setText("Номер телефону повинен бути числом");
+        if (username.isEmpty() || password.isEmpty() || name.isEmpty() || telNumber.isEmpty() || address.isEmpty()) {
+            alertLabel.setText("Заполните все поля для создания клиента");
             return;
         }
 
-        int duplicateScenario = checkForDuplicates(username, telNumber.toString());
-
-        switch (duplicateScenario) {
-            case 1:
-                alertLabel.setText("Акаунт з таким логіном і номером телефону вже існує");
-                return;
-            case 2:
-                alertLabel.setText("Акаунт з таким логіном вже існує");
-                return;
-            case 3:
-                alertLabel.setText("Акаунт з таким номером телефону вже існує");
-                return;
-            default:
-                Client client = new Client(username, password, name, telNumber.toString(), address, "Touristique");
-
-                clients.add(client);
-
-                saveDataToFile("C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clients.txt", clients);
-
-                alertLabel.setText("");
-                break;
-        }
-
-    }
-    private Integer parseTelNumber(String telNumberText) {
         try {
-            return Integer.parseInt(telNumberText);
-        } catch (NumberFormatException e) {
-            return null;
-        }
-    }
+            // Определение нового уникального id только по таблице users
+            String findMaxIdQuery = "SELECT COALESCE(MAX(id), 0) + 1 AS new_id FROM users";
+            int newId = 1;
 
-    private  int checkForDuplicates(String username, String telNumber) {
-        boolean usernameExists = false;
-        boolean telNumberExists = false;
-
-        List<Client> clients = loadDataFromClientFile("C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clients.txt");
-        List<Manager> managers = loadDataFromManagerFile("C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\managers.txt");
-
-        for (Client client : clients) {
-            if (client.getUsername().equals(username)) {
-                usernameExists = true;
-            }
-
-            if (client.getTelNumber().equals(telNumber)) {
-                telNumberExists = true;
-            }
-
-            // Если оба условия выполняются, значит, оба дубликата существуют
-            if (usernameExists && telNumberExists) {
-                return 1;
-            }
-
-            // Если только логин существует
-            if (usernameExists) {
-                return 2;
-            }
-
-            // Если только номер телефона существует
-            if (telNumberExists) {
-                return 3;
-            }
-        }
-
-        // Проверка на дубликаты в менеджерах
-        for (Manager manager : managers) {
-            if (manager.getLogin().equals(username)) {
-                usernameExists = true;
-            }
-
-            if (manager.getTelNumber().equals(telNumber)) {
-                telNumberExists = true;
-            }
-
-            // Если оба условия выполняются, значит, оба дубликата существуют
-            if (usernameExists && telNumberExists) {
-                return 1;
-            }
-
-            // Если только логин существует
-            if (usernameExists) {
-                return 2;
-            }
-
-            // Если только номер телефона существует
-            if (telNumberExists) {
-                return 3;
-            }
-        }
-
-        // Нет дубликатов
-        return 0;
-    }
-    private List<Client> loadDataFromClientFile(String filePath) {
-        List<Client> clients = new ArrayList<>();
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] data = line.split(",");
-                if (data.length == 6) {
-                    String username = data[0].trim();
-                    String password = data[1].trim();
-                    String name = data[2].trim();
-                    String telNumber = data[3].trim();
-                    String address = data[4].trim();
-                    String agencyName = data[5].trim();
-
-                    clients.add(new Client(username, password, name, telNumber, address, agencyName));
+            try (var stmt = connection.createStatement(); var rs = stmt.executeQuery(findMaxIdQuery)) {
+                if (rs.next()) {
+                    newId = rs.getInt("new_id");
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace(); // Обработка ошибок загрузки данных из файла
-        }
 
-        return clients;
-    }
-    private List<Manager> loadDataFromManagerFile(String filePath) {
-        List<Manager> managers = new ArrayList<>();
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] data = line.split(",");
-                if (data.length == 5) {
-                    String username = data[0].trim();
-                    String password = data[1].trim();
-                    String name = data[2].trim();
-                    String telNumber = data[3].trim();
-                    String agencyName = data[4].trim();
-
-                    managers.add(new Manager(username, password, name, telNumber,agencyName));
-                }
+            // Логика добавления нового пользователя и клиента
+            String insertUserQuery = "INSERT INTO users (id, username, password, role) VALUES (?, ?, ?, 'client')";
+            try (var pstmt = connection.prepareStatement(insertUserQuery)) {
+                pstmt.setInt(1, newId);
+                pstmt.setString(2, username);
+                pstmt.setString(3, password);
+                pstmt.executeUpdate();
             }
-        } catch (IOException e) {
-            e.printStackTrace(); // Обработка ошибок загрузки данных из файла
-        }
 
-        return managers;
-    }
-    private void saveDataToFile(String filename, ArrayList<Client> clients) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename, true))) {
-            for (Client client : clients) {
-
-                String line = String.format("%s,%s,%s,%s,%s,%s",
-                        client.getUsername(), client.getPassword(), client.getName(),
-                        client.getTelNumber(), client.getAddress(), client.getAgencyName());
-                writer.write(line);
-                writer.newLine();
+            String insertClientQuery = "INSERT INTO clients (id, name, tel_number, address, agency_name) VALUES (?, ?, ?, ?, 'Touristique')";
+            try (var pstmt = connection.prepareStatement(insertClientQuery)) {
+                pstmt.setInt(1, newId);
+                pstmt.setString(2, name);
+                pstmt.setString(3, telNumber);
+                pstmt.setString(4, address);
+                pstmt.executeUpdate();
             }
-        } catch (IOException e) {
+
+            alertLabel.setText("Клиент успешно создан!");
+            loadClients(); // Обновляем таблицу клиентов
+
+        } catch (SQLException e) {
             e.printStackTrace();
-
+            alertLabel.setText("Ошибка при создании клиента");
+        } finally {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    public void scanClientDataFile() throws IOException{
+    // Загрузка данных клиентов в таблицу
+    public void loadClients() {
+        Connection connection = connectToDatabase();
+        if (connection == null) {
+            alertLabel.setText("Ошибка подключения к базе данных");
+            return;
+        }
 
-        String filePath = "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clients.txt";
-
-        List<String> clientUserNames = readClientName(new File(filePath));
-        clientEditChoiceBox.getItems().setAll(clientUserNames);
-        clientDeleteChoiceBox.getItems().setAll(clientUserNames);
-
-        countClients();
-        clientsTableView.setItems(clientsList);
-        List<Client> clientData = readClientData(new File(filePath));
         clientsList.clear();
-        clientsList.addAll(clientData);
-        usernameColumn.setCellValueFactory(new PropertyValueFactory<>("username"));
-        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-        telNumberColumn.setCellValueFactory(new PropertyValueFactory<>("telNumber"));
-        addressColumn.setCellValueFactory(new PropertyValueFactory<>("address"));
 
+        String query = "SELECT u.username, c.name, c.tel_number, c.address FROM users u INNER JOIN clients c ON u.id = c.id";
+        try (var stmt = connection.createStatement(); var rs = stmt.executeQuery(query)) {
+            while (rs.next()) {
+                String username = rs.getString("username");
+                String name = rs.getString("name");
+                String telNumber = rs.getString("tel_number");
+                String address = rs.getString("address");
+
+                clientsList.add(new Client(username, "", name, telNumber, address, "Touristique"));
+            }
+
+            clientsTableView.setItems(clientsList);
+            usernameColumn.setCellValueFactory(new PropertyValueFactory<>("username"));
+            nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+            telNumberColumn.setCellValueFactory(new PropertyValueFactory<>("telNumber"));
+            addressColumn.setCellValueFactory(new PropertyValueFactory<>("address"));
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
-    private List<String> readClientName(File file) {
-        List<String> clientData = new ArrayList<>();
-
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] parts = line.split(",");
-
-                String username = parts[0];
-                String password = parts[1];
-                String name = parts[2];
-                String telNumber = parts[3];
-                String address = parts[4];
-                String agencyName = parts[5];
-
-                clientData.add(username);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+    // Удаление клиента
+    public void deleteClient(ActionEvent actionEvent) {
+        Connection connection = connectToDatabase();
+        if (connection == null) {
+            alertLabel.setText("Ошибка подключения к базе данных");
+            return;
         }
 
-        return clientData;
+        String selectedUserName = clientDeleteChoiceBox.getValue();
+
+        if (selectedUserName == null) {
+            alertLabel.setText("Выберите клиента для удаления");
+            return;
+        }
+
+        try {
+            // Удаляем данные клиента и связанные данные из таблицы users
+            String deleteClientQuery = """
+            DELETE FROM clients 
+            WHERE id = (SELECT id FROM users WHERE username = ?)
+        """;
+            try (var pstmt = connection.prepareStatement(deleteClientQuery)) {
+                pstmt.setString(1, selectedUserName);
+                int affectedRows = pstmt.executeUpdate();
+                if (affectedRows > 0) {
+                    // Удаляем пользователя только если клиент был удалён
+                    String deleteUserQuery = "DELETE FROM users WHERE username = ?";
+                    try (var pstmtUser = connection.prepareStatement(deleteUserQuery)) {
+                        pstmtUser.setString(1, selectedUserName);
+                        pstmtUser.executeUpdate();
+                    }
+                    alertLabel.setText("Клиент успешно удалён!");
+                } else {
+                    alertLabel.setText("Ошибка: клиент не найден.");
+                }
+            }
+
+            loadClients();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            alertLabel.setText("Ошибка при удалении клиента");
+        } finally {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
-    private List<Client> readClientData(File file) {
+
+    // Подсчет клиентов
+    public void countClients() {
+        Connection connection = connectToDatabase();
+        if (connection == null) {
+            alertLabel.setText("Ошибка подключения к базе данных");
+            return;
+        }
+
+        String countQuery = "SELECT COUNT(*) AS client_count FROM clients";
+        try (var stmt = connection.createStatement(); var rs = stmt.executeQuery(countQuery)) {
+            if (rs.next()) {
+                int count = rs.getInt("client_count");
+                countLabel.setText("Клиентов: " + count);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void scanClientDataFile() {
+        Connection connection = connectToDatabase();
+        if (connection == null) {
+            alertLabel.setText("Ошибка подключения к базе данных");
+            return;
+        }
+
+        try {
+            // Загружаем данные только клиентов
+            List<String> clientUserNames = readClientName(connection);
+            clientEditChoiceBox.getItems().setAll(clientUserNames);
+            clientDeleteChoiceBox.getItems().setAll(clientUserNames);
+
+            List<Client> clientData = readClientData(connection);
+            clientsList.clear();
+            clientsList.addAll(clientData);
+
+            clientsTableView.setItems(clientsList);
+            usernameColumn.setCellValueFactory(new PropertyValueFactory<>("username"));
+            nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+            telNumberColumn.setCellValueFactory(new PropertyValueFactory<>("telNumber"));
+            addressColumn.setCellValueFactory(new PropertyValueFactory<>("address"));
+
+            countClients();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            alertLabel.setText("Ошибка при загрузке данных");
+        } finally {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private List<String> readClientName(Connection connection) throws SQLException {
+        List<String> clientNames = new ArrayList<>();
+        String query = "SELECT u.username FROM users u INNER JOIN clients c ON u.id = c.id";
+
+        try (var stmt = connection.createStatement(); var rs = stmt.executeQuery(query)) {
+            while (rs.next()) {
+                clientNames.add(rs.getString("username"));
+            }
+        }
+
+        return clientNames;
+    }
+
+
+    private List<Client> readClientData(Connection connection) throws SQLException {
         List<Client> clientData = new ArrayList<>();
+        String query = """
+        SELECT u.username, u.password, c.name, c.tel_number, c.address, c.agency_name
+        FROM users u
+        INNER JOIN clients c ON u.id = c.id
+        """;
 
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] parts = line.split(",");
-
-                String username = parts[0];
-                String password = parts[1];
-                String name = parts[2];
-                String telNumber = parts[3];
-                String address = parts[4];
-                String agencyName = parts[5];
+        try (var stmt = connection.createStatement(); var rs = stmt.executeQuery(query)) {
+            while (rs.next()) {
+                String username = rs.getString("username");
+                String password = rs.getString("password");
+                String name = rs.getString("name");
+                String telNumber = rs.getString("tel_number");
+                String address = rs.getString("address");
+                String agencyName = rs.getString("agency_name");
 
                 Client client = new Client(username, password, name, telNumber, address, agencyName);
                 clientData.add(client);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
 
         return clientData;
     }
 
-    public void deleteClient(ActionEvent actionEvent) throws IOException {
-        String selectedUserName = clientDeleteChoiceBox.getValue();
-
-        List<Client> updatedClients = new ArrayList<>();
-
-        List<Client> existingClients = readClientData(new File("C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clients.txt"));
-
-        for (Client client : existingClients) {
-            if (!client.getUsername().equals(selectedUserName)) {
-                updatedClients.add(client);
-            }
-        }
-
-        updateDataFile("C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clients.txt", updatedClients);
-
-        scanClientDataFile();
-
-    }
-    private void updateDataFile(String filename, List<Client> clients) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
-            for (Client client : clients) {
-                String line = String.format("%s,%s,%s,%s,%s,%s",
-                        client.getUsername(), client.getPassword(), client.getName(),
-                        client.getTelNumber(), client.getAddress(), client.getAgencyName());
-                writer.write(line);
-                writer.newLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    public void countClients() {
-        String filePath = "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clients.txt";
-        List<Client> clients = loadDataFromClientFile(filePath);
-        int clientCount = clients.size();
-        countLabel.setText("Кількість - " + clientCount);
-    }
 }

@@ -20,8 +20,8 @@ import java.io.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.List;
+
+import java.sql.*;
 
 public class Client3 {
 
@@ -60,6 +60,19 @@ public class Client3 {
     Button searchButton;
     @FXML
     AnchorPane Anchor;
+
+    // Метод для подключения к базе данных PostgreSQL
+    private Connection connectToDatabase() {
+        String url = "jdbc:postgresql://localhost:5432/Touristique%20DB%20(Java)";
+        String user = "postgres";
+        String password = "3113";
+        try {
+            return DriverManager.getConnection(url, user, password);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     public void switchToMyVouchers(javafx.event.ActionEvent actionEvent) throws IOException {
 
@@ -117,14 +130,11 @@ public class Client3 {
                 endDate = LocalDate.parse(endDatePicker.getEditor().getText(), formatter);
             }
         } catch (DateTimeParseException e) {
-            // Выводим сообщение об ошибке в случае неверного формата
             alertLabel.setText("Неправильно введена дата");
             return;
         }
 
-
-        boolean found = searchVoucherInFile(country, city, hotel, beginDate, endDate);
-
+        boolean found = searchVoucherInDatabase(country, city, hotel, beginDate, endDate);
 
         if (found) {
             alertLabel.setText("");
@@ -143,101 +153,107 @@ public class Client3 {
             clearVoucherDetails();
         }
     }
-    private boolean searchVoucherInFile(String country, String city, String hotel, LocalDate beginDate, LocalDate endDate) {
-        String filePath = "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\vouchers.txt";
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-
-                String[] parts = line.split(",");
-
-
-                String countryFromFile = parts[0];
-                String cityFromFile = parts[1];
-                String hotelFromFile = parts[2];
-                LocalDate beginDateFromFile = LocalDate.parse(parts[3], formatter);
-                LocalDate endDateFromFile = LocalDate.parse(parts[4], formatter);
-
-
-
-                if (country.equals(countryFromFile) && city.equals(cityFromFile) && hotel.equals(hotelFromFile) &&
-                        (beginDate.isEqual(beginDateFromFile) || beginDate.isAfter(beginDateFromFile)) &&
-                        (endDate.isEqual(endDateFromFile) || endDate.isBefore(endDateFromFile))) {
-                    return true;
-                }
-
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-
-        }
-
-        return false;
-    }
-
-    private void displayVoucherDetails(String country, String city, String hotel, LocalDate beginDate, LocalDate endDate) {
-
-        String hotelImageURL = searchHotelInFile(hotel);
-
-        countryCityLabel.setText(country + ", " + city);
-        hotelLabel.setText(hotel);
-        datesLabel.setText("З " + beginDate + " по " + endDate);
-
-        if (hotelImageURL != null) {
-            hotelImageView.setImage(new Image(hotelImageURL));
-        } else {
-
-            hotelImageView.setImage(null);
-        }
-    }
 
     private void clearVoucherDetails() {
         countryCityLabel.setText("");
         hotelLabel.setText("");
         datesLabel.setText("");
     }
-    private String searchHotelInFile(String hotel) {
+    // Метод поиска путевки в базе данных
+    private boolean searchVoucherInDatabase(String country, String city, String hotel, LocalDate beginDate, LocalDate endDate) {
+        String query = "SELECT * FROM vouchers WHERE country = ? AND city = ? AND hotel = ? AND begin_date <= ? AND end_date >= ?";
+        try (Connection conn = connectToDatabase();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, country);
+            stmt.setString(2, city);
+            stmt.setString(3, hotel);
+            stmt.setDate(4, Date.valueOf(beginDate));
+            stmt.setDate(5, Date.valueOf(endDate));
 
-        String filePath = "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\hotels.txt";
-
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] parts = line.split(",");
-
-                String hotelFromFile = parts[0];
-                String imageLink = parts[1];
-
-                if (hotel.equals(hotelFromFile)) {
-                    return imageLink;
-                }
-            }
-        } catch (IOException e) {
+            ResultSet rs = stmt.executeQuery();
+            return rs.next(); // Если путевка найдена, возвращаем true
+        } catch (SQLException e) {
             e.printStackTrace();
-
         }
+        return false;
+    }
 
+    private String convertGoogleDriveURL(String url) {
+        if (url != null && url.contains("drive.google.com")) {
+            String fileId = url.split("id=")[1].split("\"")[0];// Извлекаем ID файла из URL
+            return "https://drive.google.com/uc?id=" + fileId;
+        }
+        return url; // Возвращаем оригинальный URL, если это не ссылка на Google Drive
+    }
+
+
+    private void displayVoucherDetails(String country, String city, String hotel, LocalDate beginDate, LocalDate endDate) {
+        String hotelImageURL = searchHotelImageInDatabase(hotel);
+
+        countryCityLabel.setText(country + ", " + city);
+        hotelLabel.setText(hotel);
+        datesLabel.setText("З " + beginDate + " по " + endDate);
+
+        if (hotelImageURL != null && !hotelImageURL.isEmpty()) {
+            hotelImageURL = convertGoogleDriveURL(hotelImageURL); // Преобразование URL для Google Drive
+            System.out.println("Loading image from URL: " + hotelImageURL); // Отладочный вывод
+            hotelImageView.setImage(new Image(hotelImageURL));
+        } else {
+            System.out.println("No image found for hotel: " + hotel); // Отладочный вывод
+            hotelImageView.setImage(null); // Очищаем изображение, если URL некорректен
+        }
+    }
+
+    public void createVoucherRequest(ActionEvent actionEvent) throws IOException {
+        writeVoucherRequestInDatabase(foundVoucher);
+    }
+
+    // Метод поиска изображения отеля в базе данных
+    private String searchHotelImageInDatabase(String hotel) {
+        String query = "SELECT image_url FROM hotel_images WHERE hotel = ?";
+        try (Connection conn = connectToDatabase();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, hotel);
+
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getString("image_url");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return null;
     }
-    public void createVoucherRequest(ActionEvent actionEvent) throws IOException{
-        writeVoucherRequestInFile(foundVoucher);
-    }
 
+    // Метод для записи заявки на путевку в базу данных
+    private void writeVoucherRequestInDatabase(Voucher voucher) {
+        String maxIdQuery = "SELECT MAX(id) FROM voucher_requests"; // Запрос на получение максимального id
+        String insertQuery = "INSERT INTO voucher_requests (id, username, country, city, hotel, begin_date, end_date, state, price) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ' ', NULL)"; // Запрос на вставку нового тура с id
 
-    private void writeVoucherRequestInFile(Voucher voucher) {
-        String filePath = "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clientVouchers.txt";
+        try (Connection conn = connectToDatabase()) {
+            // Получаем максимальный id
+            PreparedStatement maxIdStmt = conn.prepareStatement(maxIdQuery);
+            ResultSet rs = maxIdStmt.executeQuery();
+            int newId = 1; // Если нет записей, начнем с 1
+            if (rs.next()) {
+                newId = rs.getInt(1) + 1; // Прибавляем 1 к максимальному id
+            }
 
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath, true))) {
-            bw.write(voucher.toString());
-            bw.newLine();
-        } catch (IOException e) {
+            // Вставляем новый тур с полученным id
+            try (PreparedStatement stmt = conn.prepareStatement(insertQuery)) {
+                stmt.setInt(1, newId); // Устанавливаем новый id
+                stmt.setString(2, voucher.getUsername());
+                stmt.setString(3, voucher.getCountry());
+                stmt.setString(4, voucher.getCity());
+                stmt.setString(5, voucher.getHotel());
+                stmt.setDate(6, Date.valueOf(voucher.getBeginDate()));
+                stmt.setDate(7, Date.valueOf(voucher.getEndDate()));
+                stmt.executeUpdate();
+            }
+
+        } catch (SQLException e) {
             e.printStackTrace();
-
         }
     }
-    
-
 }

@@ -20,12 +20,10 @@ import java.awt.*;
 import java.io.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
-
+import java.sql.*;
 public class Client1 {
     private Stage stage;
     private Scene scene;
@@ -63,8 +61,21 @@ public class Client1 {
     TableColumn idColumn;
     @FXML
     private ChoiceBox<String> deleteVoucherChoiceBox;
-    private List<Voucher> voucherList;
 
+
+
+    // Подключение к базе данных PostgreSQL
+    private Connection connectToDatabase() {
+        String url = "jdbc:postgresql://localhost:5432/Touristique%20DB%20(Java)";  // Используем вашу базу данных
+        String user = "postgres";
+        String password = "3113";
+        try {
+            return DriverManager.getConnection(url, user, password);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     public void switchToCreationVoucher(javafx.event.ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Client3.fxml"));
@@ -97,28 +108,33 @@ public class Client1 {
         stage.show();
     }
 
-    public void searchMyVouchers(){
+    public void searchMyVouchers() {
         String username = UserData.getUsername();
         ObservableList<Voucher> voucherList = FXCollections.observableArrayList();
 
-        String filePath = "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clientVouchers.txt";
+        String query = "SELECT * FROM voucher_requests WHERE username = ?";
+        try (Connection conn = connectToDatabase();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, username);
 
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            while ((line = br.readLine()) != null) {
+            ResultSet rs = stmt.executeQuery();
 
-                String[] parts = line.split(",");
-
-                String voucherUsername = parts[0].trim();
-
-                if (username.equals(voucherUsername)) {
-                    Voucher voucher = parseVoucherFromLine(parts);
-                    voucherList.add(voucher);
-                }
+            while (rs.next()) {
+                Voucher voucher = new Voucher(
+                        rs.getInt("id"),  // Используем rs.getInt для получения id как int
+                        rs.getString("username"),
+                        rs.getString("country"),
+                        rs.getString("city"),
+                        rs.getString("hotel"),
+                        rs.getDate("begin_date").toLocalDate(),
+                        rs.getDate("end_date").toLocalDate(),
+                        rs.getString("state"),
+                        rs.getDouble("price")
+                );
+                voucherList.add(voucher);
             }
-        } catch (IOException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
-
         }
 
         voucherTableView.getItems().clear();
@@ -134,54 +150,27 @@ public class Client1 {
         priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
 
-        Set<String> uniqueIds = voucherList.stream().map(Voucher::getId).collect(Collectors.toSet());
+        Set<String> uniqueIds = new HashSet<>();
+        for (Voucher voucher : voucherList) {
+            uniqueIds.add(String.valueOf(voucher.getId()));  // Преобразуем int id в String для отображения в ChoiceBox
+        }
         deleteVoucherChoiceBox.getItems().setAll(uniqueIds);
     }
-    private Voucher parseVoucherFromLine(String[] parts) {
 
-        String country = parts[1].trim();
-        String city = parts[2].trim();
-        String hotel = parts[3].trim();
-        LocalDate beginDate = LocalDate.parse(parts[4].trim(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        LocalDate endDate = LocalDate.parse(parts[5].trim(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        String state = parts[6].trim();
-        String price = parts[7].trim();
-        String id = parts[8].trim();
-
-        return new Voucher(country, city, hotel, beginDate, endDate, state , price, id);
-    }
     public void deleteVoucher(ActionEvent actionEvent) {
         String selectedId = deleteVoucherChoiceBox.getValue();
 
         if (selectedId != null && !selectedId.isEmpty()) {
-            String filePath = "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clientVouchers.txt";
-            List<String> lines = new ArrayList<>();
-
-            try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-                String line;
-                while ((line = br.readLine()) != null) {
-                    String[] parts = line.split(",");
-                    String id = parts[8].trim();
-
-                    if (!id.equals(selectedId)) {
-                        lines.add(line);
-                    }
-                }
-            } catch (IOException e) {
+            String deleteQuery = "DELETE FROM voucher_requests WHERE id = ?";
+            try (Connection conn = connectToDatabase();
+                 PreparedStatement stmt = conn.prepareStatement(deleteQuery)) {
+                stmt.setString(1, selectedId);
+                stmt.executeUpdate();
+                searchMyVouchers(); // Обновляем таблицу после удаления
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
-
-            try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath))) {
-                for (String line : lines) {
-                    bw.write(line);
-                    bw.newLine();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-
-            }
-
-            searchMyVouchers();
         }
     }
+
 }

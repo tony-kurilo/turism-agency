@@ -11,6 +11,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.io.*;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,36 +41,54 @@ public class Manager11 {
     @FXML
     private TextField addressTextField;
 
+    private Connection connectToDatabase() {
+        String url = "jdbc:postgresql://localhost:5432/Touristique%20DB%20(Java)";
+        String user = "postgres";
+        String password = "3113";
+
+        try {
+            return DriverManager.getConnection(url, user, password);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     public void displayUserData() {
-        String storedUserName = UserData.getUsername();
+        int userId = UserData.getId(); // Получаем ID пользователя из UserData
+        String query = """
+        SELECT 
+            u.username, 
+            u.password, 
+            c.name, 
+            c.tel_number, 
+            c.address
+        FROM 
+            users u
+        INNER JOIN 
+            clients c 
+        ON 
+            u.id = c.id
+        WHERE 
+            u.id = ?
+    """;
 
-        String filePath = "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clients.txt";
+        try (Connection connection = connectToDatabase();
+             PreparedStatement statement = connection.prepareStatement(query)) {
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",");
-                if (parts.length == 6) {
-                    String username = parts[0];
-                    String password = parts[1];
-                    String name = parts[2];
-                    String telNumber = parts[3];
-                    String address = parts[4];
-                    String agencyName = parts[5];
-                    // Если найдено совпадение, отображаем имя в Label
-                    if (storedUserName.equals(username)) {
-                        usernameLabel.setText(username);
-                        passwordLabel.setText(password);
-                        nameLabel.setText(name);
-                        telNumberLabel.setText(telNumber);
-                        addressLabel.setText(address);
-                        return;
-                    }
-                }
+            statement.setInt(1, userId); // Устанавливаем ID пользователя в запрос
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                usernameLabel.setText(resultSet.getString("username"));
+                passwordLabel.setText(resultSet.getString("password"));
+                nameLabel.setText(resultSet.getString("name"));
+                telNumberLabel.setText(resultSet.getString("tel_number"));
+                addressLabel.setText(resultSet.getString("address"));
+            } else {
+                nameLabel.setText("Данные не найдены");
             }
-            nameLabel.setText("Имя не найдено");
-        } catch (IOException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }

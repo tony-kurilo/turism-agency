@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.*;
 
 public class Client2 {
     private Stage stage;
@@ -26,31 +27,42 @@ public class Client2 {
     @FXML
     public Label addressLabel;
 
+    // Метод для подключения к базе данных PostgreSQL
+    private Connection connectToDatabase() {
+        String url = "jdbc:postgresql://localhost:5432/Touristique%20DB%20(Java)";  // Используем вашу базу данных
+        String user = "postgres";
+        String password = "3113";
+        try {
+            return DriverManager.getConnection(url, user, password);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public void displayUserData() {
-        String username = UserData.getUsername();
+        int id = UserData.getId();
 
-        String filePath = "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clients.txt";
+        String query = "SELECT * FROM clients WHERE id = ?";
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",");
-                if (parts.length == 6) {
-                    String storedUsername = parts[0];
-                    String name = parts[2];
-                    String tel_number = parts[3];
-                    String address = parts[4];
+        try (Connection conn = connectToDatabase();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, id);
 
-                    if (storedUsername.equals(username)) {
-                        nameLabel.setText(name);
-                        numberLabel.setText(tel_number);
-                        addressLabel.setText(address);
-                        return;
-                    }
-                }
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                String name = rs.getString("name");
+                String tel_number = rs.getString("tel_number");
+                String address = rs.getString("address");
+
+                nameLabel.setText(name);
+                numberLabel.setText(tel_number);
+                addressLabel.setText(address);
+            } else {
+                nameLabel.setText("Ім'я не знайдено");
             }
-            nameLabel.setText("Ім'я не знайдено");
-        } catch (IOException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }

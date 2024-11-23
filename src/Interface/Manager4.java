@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.*;
 
 public class Manager4 {
     private Stage stage;
@@ -26,31 +27,38 @@ public class Manager4 {
     @FXML
     public Label companyLabel;
 
+    private Connection connectToDatabase() {
+        String url = "jdbc:postgresql://localhost:5432/Touristique%20DB%20(Java)";
+        String user = "postgres";
+        String password = "3113";
+
+        try {
+            return DriverManager.getConnection(url, user, password);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public void displayUserData() {
-        String username = UserData.getUsername();
+        int id = UserData.getId();
+        String query = "SELECT name, tel_number, agency_name FROM managers WHERE id = ?";
 
-        String filePath = "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\managers.txt";
+        try (Connection connection = connectToDatabase();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",");
-                if (parts.length == 5) {
-                    String storedUsername = parts[0];
-                    String name = parts[2];
-                    String tel_number = parts[3];
-                    String company = parts[4];
-
-                    if (storedUsername.equals(username)) {
-                        nameLabel.setText(name);
-                        numberLabel.setText(tel_number);
-                        companyLabel.setText(company);
-                        return;
-                    }
-                }
+            if (resultSet.next()) {
+                nameLabel.setText(resultSet.getString("name"));
+                numberLabel.setText(resultSet.getString("tel_number"));
+                companyLabel.setText(resultSet.getString("agency_name"));
+            } else {
+                nameLabel.setText("Имя не найдено");
+                numberLabel.setText("-");
+                companyLabel.setText("-");
             }
-            nameLabel.setText("Имя не найдено");
-        } catch (IOException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }

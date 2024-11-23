@@ -21,6 +21,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -43,6 +44,19 @@ public class Manager3 {
     private Label countryWithHighestDemandLabel;
     protected List<Voucher> voucherList;
     private double averageCost;
+
+    private Connection connectToDatabase() {
+        String url = "jdbc:postgresql://localhost:5432/Touristique%20DB%20(Java)";
+        String user = "postgres";
+        String password = "3113";
+
+        try {
+            return DriverManager.getConnection(url, user, password);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     public void switchToClients(javafx.event.ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("manager1.fxml"));
@@ -94,40 +108,52 @@ public class Manager3 {
     }
 
     public void searchCountries() {
-        int countryIndex = 1;
+        String query = "SELECT DISTINCT country FROM vouchers";
 
-        String filePath = "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clientVouchers.txt";
+        try (Connection connection = connectToDatabase();
+             PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet resultSet = statement.executeQuery()) {
 
-        Set<String> uniqueCountries = readUniqueCountries(filePath, countryIndex);
-
-        selectCountryChoiceBox.getItems().setAll(uniqueCountries);
-    }
-
-    private Set<String> readUniqueCountries(String filePath, int countryIndex) {
-        Set<String> uniqueCountries = new HashSet<>();
-
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] parts = line.split(",");
-
-                if (parts.length > countryIndex) {
-                    String country = parts[countryIndex].trim();
-                    uniqueCountries.add(country);
-                }
+            Set<String> uniqueCountries = new HashSet<>();
+            while (resultSet.next()) {
+                uniqueCountries.add(resultSet.getString("country"));
             }
-        } catch (IOException e) {
+
+            selectCountryChoiceBox.getItems().setAll(uniqueCountries);
+
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        return uniqueCountries;
     }
 
     public void searchClientWhoChosedCountry() {
         String selectedCountry = selectCountryChoiceBox.getValue();
-        List<String> matchingUsernames = searchUsernamesByCountry(selectedCountry, "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clientVouchers.txt");
-        List<String> matchingNames = searchNamesByUsername(matchingUsernames, "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clients.txt");
-        displayNamesInTableView(matchingNames);
+        if (selectedCountry == null) return;
+
+        String query = """
+        SELECT u.username
+        FROM users u
+        JOIN voucher_requests v ON u.username = v.username
+        WHERE v.country = ?
+    """;
+
+        try (Connection connection = connectToDatabase();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setString(1, selectedCountry);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                List<String> matchingNames = new ArrayList<>();
+                while (resultSet.next()) {
+                    matchingNames.add(resultSet.getString("username"));
+                }
+
+                displayNamesInTableView(matchingNames);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private List<String> searchUsernamesByCountry(String country, String filePath) {
@@ -194,108 +220,81 @@ public class Manager3 {
 
 
     public void averageVoucherCost(ActionEvent actionEvent) {
-        String filePath = "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clientVouchers.txt";
-        double totalCost = 0;
-        int voucherCount = 0;
+        String query = "SELECT AVG(price) AS average_price FROM voucher_requests WHERE price IS NOT NULL";
 
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] parts = line.split(",");
+        try (Connection connection = connectToDatabase();
+             PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet resultSet = statement.executeQuery()) {
 
-                if (parts.length >= 9) {
-                    String priceString = parts[7].trim();
-
-                    if (!priceString.isEmpty()) {
-                        try {
-                            double price = Double.parseDouble(priceString);
-                            totalCost += price;
-                            voucherCount++;
-                        } catch (NumberFormatException e) {
-                        }
-                    }
+            if (resultSet.next()) {
+                averageCost = resultSet.getDouble("average_price"); // Исправлено: "average_price"
+                if (resultSet.wasNull()) {
+                    averageCostLabel.setText("Немає даних");
+                } else {
+                    averageCostLabel.setText(String.format("%.2f", averageCost));
                 }
+            } else {
+                averageCostLabel.setText("Немає даних");
             }
-        } catch (IOException e) {
+
+
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-
-
-        if (voucherCount > 0) {
-            averageCost = totalCost / voucherCount;
-        } else {
-            averageCost = 0;
-        }
-
-        averageCostLabel.setText(""+averageCost);
     }
 
-    public void averageDuration(ActionEvent actionEvent){
-        String filePath = "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clientVouchers.txt"; // Укажите правильный путь к файлу
+    public void averageDuration(ActionEvent actionEvent) {
+        String query = """
+        SELECT begin_date, end_date, (end_date - begin_date) AS duration
+        FROM voucher_requests
+        WHERE end_date IS NOT NULL AND begin_date IS NOT NULL;
+    """;
 
-        int totalDuration = 0;
-        int tripCount = 0;
+        try (Connection connection = connectToDatabase();
+             PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet resultSet = statement.executeQuery()) {
 
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] parts = line.split(",");
-
-                if (parts.length >= 9) {
-                    String beginDateString = parts[4].trim();
-                    String endDateString = parts[5].trim();
-
-                    try {
-                        LocalDate beginDate = LocalDate.parse(beginDateString, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-                        LocalDate endDate = LocalDate.parse(endDateString, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-
-                        int duration = (int) beginDate.until(endDate).getDays();
-
-                        totalDuration += duration;
-                        tripCount++;
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+            if (resultSet.next()) {
+                double averageDuration = resultSet.getDouble("duration");
+                if (resultSet.wasNull()) {
+                    averageDurationLabel.setText("Немає даних");
+                } else {
+                    averageDurationLabel.setText(String.format("%.1f діб", averageDuration));
                 }
+            } else {
+                averageDurationLabel.setText("Немає даних");
             }
-        } catch (IOException e) {
+
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        if (tripCount > 0) {
-            int averageDuration = totalDuration / tripCount;
-
-            averageDurationLabel.setText(averageDuration + " діб");
-        } else {
-            averageDurationLabel.setText("Немає даних");
-        }
     }
-    public void countryWithHighestDemand(ActionEvent actionEvent){
-        String filePath = "C:\\Users\\kuril\\IdeaProjects\\kursova\\src\\Interface\\clientVouchers.txt";
 
-        Map<String, Integer> countryCountMap = new HashMap<>();
+    public void countryWithHighestDemand(ActionEvent actionEvent) {
+        String query = """
+        SELECT country, COUNT(*) AS count
+        FROM vouchers
+        GROUP BY country
+        ORDER BY count DESC
+        LIMIT 1
+    """;
 
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] parts = line.split(",");
+        try (Connection connection = connectToDatabase();
+             PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet resultSet = statement.executeQuery()) {
 
-                String country = parts[1].trim();
-
-                countryCountMap.put(country, countryCountMap.getOrDefault(country, 0) + 1);
+            if (resultSet.next()) {
+                String mostPopularCountry = resultSet.getString("country");
+                countryWithHighestDemandLabel.setText(mostPopularCountry);
+            } else {
+                countryWithHighestDemandLabel.setText("Немає даних");
             }
-        } catch (IOException e) {
+
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        String mostPopularCountry = findMostPopularCountry(countryCountMap);
-
-        if (mostPopularCountry != null) {
-            countryWithHighestDemandLabel.setText(mostPopularCountry);
-        } else {
-            countryWithHighestDemandLabel.setText("Нема даних");
-        }
     }
+
 
     private String findMostPopularCountry(Map<String, Integer> countryCountMap) {
         int maxCount = 0;
