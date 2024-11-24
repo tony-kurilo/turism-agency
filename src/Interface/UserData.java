@@ -3,6 +3,8 @@ package Interface;
 import java.time.LocalDate;
 
 public class UserData {
+
+    private static int id;
     private static String username;
     private static String password;
 
@@ -12,6 +14,15 @@ public class UserData {
     private static LocalDate beginDate;
     private static LocalDate endDate;
     private static String url;
+
+    public static int getId() {
+        return id;  // Возвращаем id как int
+    }
+
+    public static void setId(int id) {
+        UserData.id = id;  // Принимаем id как int и сохраняем в переменную
+    }
+
 
     public static String getUsername() {
         return username;

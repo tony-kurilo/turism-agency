@@ -1,5 +1,6 @@
 package Classes;
 
+import Interface.UserData;
 import javafx.scene.control.DatePicker;
 
 import java.io.BufferedReader;
@@ -16,11 +17,12 @@ public class Voucher {
     private LocalDate beginDate;
     private LocalDate endDate;
     private String state;
-    private String price;
-    private String id;
+    private double price;
+    private int id;
     private String url;
 
-    public Voucher(String username, String country, String city, String hotel, LocalDate beginDate, LocalDate endDate, String state, String price , String id) {
+    public Voucher(int id, String username, String country, String city, String hotel, LocalDate beginDate, LocalDate endDate, String state, double price ) {
+        this.id = id;
         this.username = username;
         this.country = country;
         this.city = city;
@@ -28,8 +30,18 @@ public class Voucher {
         this.beginDate = beginDate;
         this.endDate = endDate;
         this.state = state;
-        this.price = price;
-        this.id = id;
+        this.price = price;  // Assign price as double
+    }
+    public Voucher(String username, String country, String city, String hotel, LocalDate beginDate, LocalDate endDate, double price) {
+        this.username = username;
+        this.country = country;
+        this.city = city;
+        this.hotel = hotel;
+        this.beginDate = beginDate;
+        this.endDate = endDate;
+        this.state = "default_state";  // Default value
+        this.price = price;  // Set price as double
+        this.id = (int) (Math.random() * 10000); // Generate random id
     }
 
     public Voucher(String username, String country, String city, String hotel, LocalDate beginDate, LocalDate endDate) {
@@ -39,30 +51,9 @@ public class Voucher {
         this.hotel = hotel;
         this.beginDate = beginDate;
         this.endDate = endDate;
-        this.state = "В обробці";
-        this.price = " ";
-        this.id = String.valueOf(generateUniqueId());
-    }
-    public Voucher(String country, String city, String hotel, LocalDate beginDate, LocalDate endDate, String state, String price , String id) {
-        this.country = country;
-        this.city = city;
-        this.hotel = hotel;
-        this.beginDate = beginDate;
-        this.endDate = endDate;
-        this.state = state;
-        this.price = price;
-        this.id = id;
-    }
-    public Voucher(String country, String city, String hotel, LocalDate beginDate, LocalDate endDate) {
-        this.country = country;
-        this.city = city;
-        this.hotel = hotel;
-        this.beginDate = beginDate;
-        this.endDate = endDate;
-    }
-    public Voucher(String hotel, String url) {
-        this.hotel = hotel;
-        this.url = url;
+        this.state = "default_state";  // Default value
+        this.price = price;  // Set price as double
+        this.id = (int) (Math.random() * 10000); // Generate random id
     }
 
     @Override
@@ -97,18 +88,22 @@ public class Voucher {
     public String getState(){
         return state;
     }
-    public String getPrice(){
+    public double getPrice(){
         return price;
     }
 
-    public String getId(){
-        return id;
+    public int getId() {
+        return id;  // Возвращаем id как int
+    }
+
+    public void setId(int id) {
+        this.id = id;  // Принимаем id как int и сохраняем в переменную
     }
     public String setState(String state){
         this.state = state;
         return state;
     }
-    public String setPrice(String price){
+    public double setPrice(Double price){
         this.price = price;
         return price;
     }
