@@ -1,6 +1,5 @@
 package Interface;
 
-import Classes.Client;
 import Classes.Voucher;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -15,32 +14,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
-import javax.swing.*;
-import java.awt.*;
 import java.io.*;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.List;
-import java.util.stream.Collectors;
 import java.sql.*;
-public class Client1 {
+public class ClientVouchersPage {
     private Stage stage;
     private Scene scene;
-    private Parent root;
-    @FXML
-    protected UserData userModel;
-    @FXML
-    private TextField countryTextField;
-    @FXML
-    private TextField cityTextField;
-    @FXML
-    private TextField hotelTextField;
-    @FXML
-    private DatePicker beginDatePicker;
-    @FXML
-    private DatePicker endDatePicker;
-
     @FXML
     TableView <Voucher> voucherTableView;
     @FXML
@@ -62,8 +41,6 @@ public class Client1 {
     @FXML
     private ChoiceBox<String> deleteVoucherChoiceBox;
 
-
-
     // Подключение к базе данных PostgreSQL
     private Connection connectToDatabase() {
         String url = "jdbc:postgresql://localhost:5432/Touristique%20DB%20(Java)";  // Используем вашу базу данных
@@ -78,9 +55,9 @@ public class Client1 {
     }
 
     public void switchToCreationVoucher(javafx.event.ActionEvent actionEvent) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("Client3.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("ClientSearchVoucherPage.fxml"));
         Parent root = loader.load();
-        Client3 client3Controller = loader.getController();
+        ClientSearchVoucherPage clientSearchVoucherPageController = loader.getController();
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
@@ -88,11 +65,11 @@ public class Client1 {
     }
 
     public void switchToData(javafx.event.ActionEvent actionEvent) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("client2.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("ClientDataPage.fxml"));
         Parent root = loader.load();
 
-        Client2 client2Controller = loader.getController();
-        client2Controller.displayUserData();
+        ClientDataPage clientDataPageController = loader.getController();
+        clientDataPageController.displayUserData();
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -101,6 +78,7 @@ public class Client1 {
     }
 
     public void switchToLogin(javafx.event.ActionEvent actionEvent) throws IOException {
+        UserData.setId(0);
         Parent root = FXMLLoader.load(getClass().getResource("login.fxml"));
         stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
         scene = new Scene (root);

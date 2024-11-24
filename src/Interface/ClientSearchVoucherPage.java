@@ -23,15 +23,10 @@ import java.time.format.DateTimeParseException;
 
 import java.sql.*;
 
-public class Client3 {
-
+public class ClientSearchVoucherPage {
     private Stage stage;
     private Scene scene;
-    private Parent root;
-
     private Voucher foundVoucher;
-
-
     @FXML
     TextField countryTextField;
     @FXML
@@ -76,11 +71,11 @@ public class Client3 {
 
     public void switchToMyVouchers(javafx.event.ActionEvent actionEvent) throws IOException {
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("client1.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("ClientVouchersPage.fxml"));
         Parent root = loader.load();
 
-        Client1 client1Controller = loader.getController();
-        client1Controller.searchMyVouchers();
+        ClientVouchersPage clientVouchersPageController = loader.getController();
+        clientVouchersPageController.searchMyVouchers();
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -90,11 +85,11 @@ public class Client3 {
     }
 
     public void switchToMyData(javafx.event.ActionEvent actionEvent) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("client2.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("ClientDataPage.fxml"));
         Parent root = loader.load();
 
-        Client2 client2Controller = loader.getController();
-        client2Controller.displayUserData();
+        ClientDataPage clientDataPageController = loader.getController();
+        clientDataPageController.displayUserData();
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -103,6 +98,7 @@ public class Client3 {
     }
 
     public void switchToLogin(javafx.event.ActionEvent actionEvent) throws IOException {
+        UserData.setId(0);
         Parent root = FXMLLoader.load(getClass().getResource("login.fxml"));
         stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
         scene = new Scene (root);

@@ -17,9 +17,6 @@ import java.sql.*;
 public class Login {
     private Stage stage;
     private Scene scene;
-    private Parent root;
-    @FXML
-    private UserData userModel;
     @FXML
     public TextField loginTextField;
     @FXML
@@ -121,20 +118,20 @@ public class Login {
     }
     public void switchToClient(javafx.event.ActionEvent actionEvent) throws IOException {
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("Client3.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("ClientSearchVoucherPage.fxml"));
         Parent root = loader.load();
-        Client3 client3Controller = loader.getController();
+        ClientSearchVoucherPage clientSearchVoucherPageController = loader.getController();
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
     }
     public void switchToManager(javafx.event.ActionEvent actionEvent) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("manager1.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("ManagerEditClientPage.fxml"));
         Parent root = loader.load();
 
-        Manager1 manager1Controller = loader.getController();
-        manager1Controller.scanClientDataFile();
+        ManagerEditClientPage managerEditClientPageController = loader.getController();
+        managerEditClientPageController.scanClientDataFile();
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);

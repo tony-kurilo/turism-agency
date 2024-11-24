@@ -14,22 +14,17 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.*;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-public class Manager3 {
+public class ManagerDataAnalysisPage {
     private Stage stage;
     private Scene scene;
-    private Parent root;
     @FXML
     private ChoiceBox<String> selectCountryChoiceBox;
     @FXML
@@ -59,11 +54,11 @@ public class Manager3 {
     }
 
     public void switchToClients(javafx.event.ActionEvent actionEvent) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("manager1.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("ManagerEditClientPage.fxml"));
         Parent root = loader.load();
 
-        Manager1 manager1Controller = loader.getController();
-        manager1Controller.scanClientDataFile();
+        ManagerEditClientPage managerEditClientPageController = loader.getController();
+        managerEditClientPageController.scanClientDataFile();
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -73,11 +68,11 @@ public class Manager3 {
     }
 
     public void switchToVouchers(javafx.event.ActionEvent actionEvent) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("manager2.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("ManagerProcessVouchersPage.fxml"));
         Parent root = loader.load();
 
-        Manager2 manager2Controller = loader.getController();
-        manager2Controller.scanClientDataFile();
+        ManagerProcessVouchersPage managerProcessVouchersPageController = loader.getController();
+        managerProcessVouchersPageController.scanClientDataFile();
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -87,11 +82,11 @@ public class Manager3 {
     }
 
     public void switchToData(javafx.event.ActionEvent actionEvent) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("manager4.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("ManagerDataPage.fxml"));
         Parent root = loader.load();
 
-        Manager4 manager4controller = loader.getController();
-        manager4controller.displayUserData();
+        ManagerDataPage managerDataPageController = loader.getController();
+        managerDataPageController.displayUserData();
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -100,6 +95,7 @@ public class Manager3 {
     }
 
     public void switchToLogin(javafx.event.ActionEvent actionEvent) throws IOException {
+        UserData.setId(0);
         Parent root = FXMLLoader.load(getClass().getResource("login.fxml"));
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -154,50 +150,6 @@ public class Manager3 {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    private List<String> searchUsernamesByCountry(String country, String filePath) {
-        List<String> matchingUsernames = new ArrayList<>();
-
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] parts = line.split(",");
-
-                String username = parts[0];
-                String countryFromFile = parts[1];
-
-                if (country.equals(countryFromFile)) {
-                    matchingUsernames.add(username);
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return matchingUsernames;
-    }
-
-    private List<String> searchNamesByUsername(List<String> usernames, String filePath) {
-        List<String> matchingNames = new ArrayList<>();
-
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] parts = line.split(",");
-
-                String usernameFromFile = parts[0];
-                String name = parts[2];
-
-                if (usernames.contains(usernameFromFile)) {
-                    matchingNames.add(name);
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return matchingNames;
     }
 
     private void displayNamesInTableView(List<String> names) {
@@ -295,21 +247,4 @@ public class Manager3 {
         }
     }
 
-
-    private String findMostPopularCountry(Map<String, Integer> countryCountMap) {
-        int maxCount = 0;
-        String mostPopularCountry = null;
-
-        for (Map.Entry<String, Integer> entry : countryCountMap.entrySet()) {
-            String country = entry.getKey();
-            int count = entry.getValue();
-
-            if (count > maxCount) {
-                maxCount = count;
-                mostPopularCountry = country;
-            }
-        }
-
-        return mostPopularCountry;
-    }
 }

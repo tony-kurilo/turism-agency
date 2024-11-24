@@ -8,15 +8,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.sql.*;
 
-public class Manager4 {
+public class ManagerDataPage {
     private Stage stage;
     private Scene scene;
-    private Parent root;
 
     @FXML
     public Label nameLabel;
@@ -63,11 +60,11 @@ public class Manager4 {
         }
     }
     public void switchToClients(javafx.event.ActionEvent actionEvent) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("manager1.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("ManagerEditClientPage.fxml"));
         Parent root = loader.load();
 
-        Manager1 manager1Controller = loader.getController();
-        manager1Controller.scanClientDataFile();
+        ManagerEditClientPage managerEditClientPageController = loader.getController();
+        managerEditClientPageController.scanClientDataFile();
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -76,11 +73,11 @@ public class Manager4 {
 
     }
     public void switchToVouchers(javafx.event.ActionEvent actionEvent) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("manager2.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("ManagerProcessVouchersPage.fxml"));
         Parent root = loader.load();
 
-        Manager2 manager2Controller = loader.getController();
-        manager2Controller.scanClientDataFile();
+        ManagerProcessVouchersPage managerProcessVouchersPageController = loader.getController();
+        managerProcessVouchersPageController.scanClientDataFile();
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -89,11 +86,11 @@ public class Manager4 {
 
     }
     public void switchToDataAnalys(javafx.event.ActionEvent actionEvent) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("manager3.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("ManagerDataAnalysisPage.fxml"));
         Parent root = loader.load();
 
-        Manager3 manager3controller = loader.getController();
-        manager3controller.searchCountries();
+        ManagerDataAnalysisPage managerDataAnalysisPageController = loader.getController();
+        managerDataAnalysisPageController.searchCountries();
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -101,6 +98,7 @@ public class Manager4 {
         stage.show();
     }
     public void switchToLogin(javafx.event.ActionEvent actionEvent) throws IOException {
+        UserData.setId(0);
         Parent root = FXMLLoader.load(getClass().getResource("login.fxml"));
         stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
         scene = new Scene (root);
